@@ -28,4 +28,39 @@
 	</bean>
 	
 	<import resource="spring-dubbo.xml"/>
+	
+	<context:component-scan base-package="com.cubead" />
+
+	<!-- 配置数据源 -->
+	<bean name="dataSourceOne" class="com.alibaba.druid.pool.DruidDataSource"
+		init-method="init" destroy-method="close">
+		  
+		<property name="url" value="jdbc:mysql://211.151.170.197/cubead_ep_test?characterEncoding=UTF-8" /> 
+		 <property name="username" value="root" /> 
+		 <property name="password" value="pasWd238" /> 
+		 <!--
+		<property name="url"
+			value="jdbc:mysql://172.16.250.235/cubead_ep_test?characterEncoding=UTF-8" />
+		<property name="username" value="root" />
+		<property name="password" value="kevin" />
+		 -->
+		<property name="initialSize" value="30" />
+		<property name="maxActive" value="200" />
+		<property name="minIdle" value="10" />
+		<property name="maxWait" value="60000" />
+		<property name="validationQuery" value="true" />
+		<property name="testOnBorrow" value="true" />
+		<property name="testOnReturn" value="true" />
+		<property name="testWhileIdle" value="true" />
+		<property name="timeBetweenEvictionRunsMillis" value="60000" />
+		<property name="minEvictableIdleTimeMillis" value="300000" />
+		<property name="removeAbandoned" value="true" />
+		<property name="removeAbandonedTimeout" value="1800" />
+		<property name="logAbandoned" value="true" />
+		<property name="filters" value="mergeStat" />
+	</bean>
+
+	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate" lazy-init="false">
+		<property name="dataSource" ref="dataSourceOne" />
+	</bean>
 </beans>
