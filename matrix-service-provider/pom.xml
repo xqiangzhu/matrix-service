@@ -84,7 +84,7 @@
 			<artifactId>jedis</artifactId>
 			<version>${jedis.version}</version>
 		</dependency>
-		<!-- Log start -->
+		<!-- Log start 
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
@@ -110,7 +110,7 @@
 			<artifactId>logback-classic</artifactId>
 			<version>${logback.version}</version>
 		</dependency>
-		<!-- Log end -->
+		 Log end -->
 
 		<!-- mybatis -->
 		<dependency>

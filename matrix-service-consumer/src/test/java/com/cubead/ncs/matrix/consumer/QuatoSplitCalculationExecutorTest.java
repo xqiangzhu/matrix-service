@@ -52,7 +52,6 @@ public class QuatoSplitCalculationExecutorTest extends BaseTest {
 
     @Test
     public void calculatAllMergeResultSetAsJsonObjectsTest() {
-
         List<JSONObject> josnRows = quatoSplitCalculationExecutorInf.calculatAllMergeResultSetAsJsonObjects(
                 roiQueryUnit, compressedQueryUnit, pvQueryUnit);
 

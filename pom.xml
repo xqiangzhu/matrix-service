@@ -16,7 +16,6 @@
 
 	<!-- 资源库 -->
 	<repositories>
-	    <!--  
 		<repository>
 			<id>thirdparty</id>
 			<url>http://192.168.3.185:8180/nexus/content/repositories/thirdparty</url>
@@ -33,7 +32,6 @@
 			</snapshots>
 			<layout>default</layout>
 		</repository>
-		-->
 		<repository>
 			<id>oschina</id>
 			<name>Maven of oschina.net</name>
@@ -111,7 +109,7 @@
 		<upacp-version>1.0.0</upacp-version>
 		<!-- activemq -->
 		<activemq.version>5.7.0</activemq.version>
-		
+
 		<!-- Common libs -->
 		<dubbo_version>2.4.9</dubbo_version>
 		<javassist_version>3.15.0-GA</javassist_version>
@@ -151,7 +149,7 @@
 		<easymock_version>3.2</easymock_version>
 		<jmockit_version>0.999.8</jmockit_version>
 		<!-- Build args -->
-		<!--<argline>-server -Xms64m -Xmx64m -XX:PermSize=64m -XX:MaxPermSize=64m</argline>-->
+		<!--<argline>-server -Xms64m -Xmx64m -XX:PermSize=64m -XX:MaxPermSize=64m</argline> -->
 		<skip_maven_deploy>false</skip_maven_deploy>
 		<updateReleaseInfo>true</updateReleaseInfo>
 	</properties>
@@ -174,6 +172,9 @@
 
 	</dependencies>
 
+	<dependencyManagement>
+		
+	</dependencyManagement>
 	<profiles>
 		<profile>
 			<id>test</id>
@@ -222,6 +223,34 @@
 				</configuration>
 			</plugin>
 		</plugins>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>org.apache.maven.plugins</groupId>
+										<artifactId>maven-dependency-plugin</artifactId>
+										<versionRange>[2.0,)</versionRange>
+										<goals>
+											<goal>copy-dependencies</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore />
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 	</build>
 
 </project>
