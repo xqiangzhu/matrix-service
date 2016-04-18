@@ -1,4 +1,4 @@
-package com.ishidai.dubbo.consumer;
+package com.cubead.ncs.matrix.consumer;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;

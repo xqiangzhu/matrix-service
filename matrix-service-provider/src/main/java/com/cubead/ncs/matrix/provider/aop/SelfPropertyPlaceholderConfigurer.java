@@ -28,7 +28,6 @@ public class SelfPropertyPlaceholderConfigurer extends PropertyPlaceholderConfig
     /**
      * 获得本机hostname
      * 
-     * @author yhl
      * @return
      */
     private static String getHostName() {

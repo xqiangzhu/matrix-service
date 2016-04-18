@@ -17,16 +17,13 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
 	http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+
 	
-	<dubbo:application name="matrix-service"  />
-	<dubbo:registry id="Iprovider" address="zookeeper://192.168.3.86:2181" />
-	<dubbo:protocol name="dubbo" port="20880" />
+	<dubbo:application name="matrix-service-consumer"  />
+	<dubbo:registry check="false" id="registry" address="zookeeper://192.168.3.86:2181"  />
 	
 	<!-- 公用服务 -->
-	<dubbo:service interface="com.cubead.ncs.matrix.api.QuatoSplitCalculationExecutorInf" ref="pubService" registry="Iprovider" />
-	<bean id="pubService" class="com.cubead.ncs.matrix.provider.out.QuatoSplitCalculationExecutorImpl" />
-	
-	
+	<dubbo:reference id="pubService" interface="com.cubead.ncs.matrix.api.QuatoSplitCalculationExecutorInf" registry="registry" timeout="30000"/>
 </beans>
