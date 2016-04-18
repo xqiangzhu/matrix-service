@@ -2,7 +2,7 @@ package com.cubead.matrix.providertest.base;
 
 import java.util.List;
 
-import com.cubead.performance.martix.MatrixTableSearch.QuotaField;
+import com.cubead.ncs.matrix.provider.exec.MatrixTableSearch.QuotaField;
 import com.lmax.disruptor.EventFactory;
 
 /**

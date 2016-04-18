@@ -20,50 +20,13 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
 	http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
 	
-	<dubbo:application name="Idubbo-provider"  />
-	<!--生产环境  zookeeper://zookeeper.native.puhuifinance.com:40000 -->
+	<dubbo:application name="matrix-service"  />
 	<dubbo:registry id="Iprovider" address="zookeeper://172.16.22.104:2181" />
 	<dubbo:protocol name="dubbo" port="20880" />
+	
 	<!-- 公用服务 -->
-	<dubbo:service interface="com.ishidai.dubbo.api.PubService" ref="pubService" registry="Iprovider" />
-	<bean id="pubService" class="com.ishidai.dubbo.provider.out.PubServiceImpl" />
-	<dubbo:service interface="com.ishidai.dubbo.api.SendMQService" ref="sendMQService" registry="Iprovider" />
-	<bean id="sendMQService" class="com.ishidai.dubbo.provider.out.SendMQServiceImpl" />
-	<dubbo:service interface="com.ishidai.dubbo.api.BankCardService" ref="bankCardService" registry="Iprovider" timeout="10000"/>
-	<bean id="bankCardService" class="com.ishidai.dubbo.provider.out.BankCardServiceImpl" />
-	<dubbo:service interface="com.ishidai.dubbo.api.SmsService" ref="smsService" registry="Iprovider" />
-	<bean id="smsService" class="com.ishidai.dubbo.provider.out.SmsServiceImpl" />
-	<dubbo:service interface="com.ishidai.dubbo.api.RuleEngineService" ref="ruleEngineService" registry="Iprovider" />
-	<bean id="ruleEngineService" class="com.ishidai.dubbo.provider.out.RuleEngineServiceImpl" />
-	<dubbo:service interface="com.ishidai.dubbo.api.RechargeRepayService" ref="rechargeRepayService" registry="Iprovider" timeout="10000" />
-	<bean id="rechargeRepayService" class="com.ishidai.dubbo.provider.out.RechargeRepayServiceImpl" />
-	<!-- 汽车之家服务 -->
-	<dubbo:service interface="com.ishidai.dubbo.api.car.LoanService" ref="loanService" registry="Iprovider" />
-	<bean id="loanService" class="com.ishidai.dubbo.provider.out.car.LoanServiceImpl" />
-	<!-- 51信用卡服务 -->
-	<dubbo:service interface="com.ishidai.dubbo.api.card51.Loan51Service" ref="loan51Service" registry="Iprovider" />
-	<bean id="loan51Service" class="com.ishidai.dubbo.provider.out.card51.Loan51ServiceImpl" />	
-	<!-- 身份认证服务 -->
-	<dubbo:service interface="com.ishidai.dubbo.api.IdentityService" ref="IdentityService" registry="Iprovider" />
-	<bean id="IdentityService" class="com.ishidai.dubbo.provider.out.IdentityServiceImpl" />
+	<dubbo:service interface="com.cubead.ncs.matrix.provider.out.QuatoSplitCalculationExecutorInf" ref="pubService" registry="Iprovider" />
+	<bean id="pubService" class="com.cubead.ncs.matrix.provider.out.QuatoSplitCalculationExecutorImpl" />
 	
 	
-	<!--生产环境  zookeeper://zookeeper.native.puhuifinance.com:40000 -->
-	<dubbo:registry id="noticeRegistry" address="zookeeper://172.16.7.56:40000" client="zkclient" timeout="100000"/>
-	<!-- 还款相关查询服务-->
-    <dubbo:reference id="repayQueryService" interface="com.puhui.core.api.RepayQueryService" timeout="100000" registry="noticeRegistry" check="false"/>
-    <!-- 还款服务-->
-	<dubbo:reference id="repayService" interface="com.puhui.core.api.RepayService" timeout="200000" registry="noticeRegistry" check="false"/>
-	<!-- 账户查询服务-->
-    <dubbo:reference id="accountQueryService" interface="com.puhui.core.api.AccountQueryService" timeout="200000" registry="noticeRegistry" check="false"/>
-    <!-- 账户服务-->
-    <dubbo:reference id="accountService" interface="com.puhui.core.api.AccountService" timeout="200000" registry="noticeRegistry" check="false"/>
-	<!-- 结算贷后 -->
-	<dubbo:reference id="repayCaseService" interface="com.puhui.repay.api.service.RepayCaseService" timeout="100000" registry="noticeRegistry" check="false"/>
-	
-    
-    <!--生产环境  zookeeper://zookeeper.native.puhuifinance.com:40000 -->
-    <dubbo:registry id="noticesmsRegistry" address="zookeeper://172.16.7.56:40000" client="zkclient" timeout="200000"/>
-    <!-- 短信息发送服务 -->
-    <dubbo:reference id="shortMessageSendService" interface="com.puhui.notification.api.ShortMessageSendService" timeout="200000" registry="noticesmsRegistry" check="false"/>
 </beans>

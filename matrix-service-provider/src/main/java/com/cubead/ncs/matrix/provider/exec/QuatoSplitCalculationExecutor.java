@@ -18,7 +18,11 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
 
-import com.cubead.ncs.matrix.provider.exec.SqlDismantling.QueryUnit;
+import com.cubead.ncs.matrix.api.Dimension;
+import com.cubead.ncs.matrix.api.Quota;
+import com.cubead.ncs.matrix.api.QuotaWithValue;
+import com.cubead.ncs.matrix.api.SqlDismantling;
+import com.cubead.ncs.matrix.api.SqlDismantling.QueryUnit;
 
 /**
  * 分表执行引擎

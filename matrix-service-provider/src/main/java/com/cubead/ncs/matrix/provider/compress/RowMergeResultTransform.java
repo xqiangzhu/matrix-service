@@ -8,8 +8,8 @@ import java.util.TreeSet;
 import org.springframework.stereotype.Component;
 
 import com.alibaba.fastjson.JSONObject;
-import com.cubead.ncs.matrix.provider.exec.Dimension;
-import com.cubead.ncs.matrix.provider.exec.Quota;
+import com.cubead.ncs.matrix.api.Dimension;
+import com.cubead.ncs.matrix.api.Quota;
 import com.cubead.ncs.matrix.provider.exec.RowMergeResultSet;
 
 /**

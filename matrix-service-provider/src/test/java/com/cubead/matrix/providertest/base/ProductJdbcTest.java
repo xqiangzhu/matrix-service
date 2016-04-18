@@ -9,8 +9,8 @@ import org.junit.Assert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import com.cubead.performance.martix.MatrixTableSearch;
-import com.cubead.performance.martix.MatrixTableSearch.QuotaField;
+import com.cubead.ncs.matrix.provider.exec.MatrixTableSearch;
+import com.cubead.ncs.matrix.provider.exec.MatrixTableSearch.QuotaField;
 
 /**
  * 水平垂直切分启动类

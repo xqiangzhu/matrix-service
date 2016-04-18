@@ -9,11 +9,11 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.alibaba.fastjson.JSONObject;
-import com.cubead.performance.compress.RowMergeResultTransform;
-import com.cubead.performance.martix.QuatoSplitCalculationExecutor;
-import com.cubead.performance.martix.Quota;
-import com.cubead.performance.martix.RowMergeResultSet;
-import com.cubead.performance.martix.SqlDismantling.QueryUnit;
+import com.cubead.ncs.matrix.api.Quota;
+import com.cubead.ncs.matrix.api.SqlDismantling.QueryUnit;
+import com.cubead.ncs.matrix.provider.compress.RowMergeResultTransform;
+import com.cubead.ncs.matrix.provider.exec.QuatoSplitCalculationExecutor;
+import com.cubead.ncs.matrix.provider.exec.RowMergeResultSet;
 
 /**
  * 垂直压缩方案启动类

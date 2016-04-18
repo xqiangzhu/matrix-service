@@ -3,6 +3,9 @@ package com.cubead.ncs.matrix.provider.exec;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.cubead.ncs.matrix.api.Dimension;
+import com.cubead.ncs.matrix.api.QuotaWithValue;
+
 /**
  * 数据库取数后的映射结果
  * 

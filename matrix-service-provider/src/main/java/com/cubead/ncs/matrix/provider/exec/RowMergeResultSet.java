@@ -9,7 +9,10 @@ import java.util.concurrent.Executors;
 
 import org.apache.commons.collections.CollectionUtils;
 
-import com.cubead.ncs.matrix.provider.exec.SqlDismantling.QueryUnit;
+import com.cubead.ncs.matrix.api.Quota;
+import com.cubead.ncs.matrix.api.QuotaWithValue;
+import com.cubead.ncs.matrix.api.SqlDismantling;
+import com.cubead.ncs.matrix.api.SqlDismantling.QueryUnit;
 
 /**
  * 合并后的结果集

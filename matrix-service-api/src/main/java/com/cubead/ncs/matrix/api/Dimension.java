@@ -1,4 +1,4 @@
-package com.cubead.ncs.matrix.provider.exec;
+package com.cubead.ncs.matrix.api;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
