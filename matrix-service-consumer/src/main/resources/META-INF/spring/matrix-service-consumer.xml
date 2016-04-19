@@ -25,7 +25,8 @@
 	<dubbo:registry check="false" id="registry" address="zookeeper://192.168.3.86:2181"  />
 	
 	<!-- 公用服务-->
-	<dubbo:reference id="calculationService" interface="com.cubead.ncs.matrix.api.QuatoSplitCalculationExecutorInf" registry="registry" timeout="30000"/>
+	<dubbo:reference id="calculationService" interface="com.cubead.ncs.matrix.api.QuatoSplitCalculationExecutorInf"
+	   registry="registry" timeout="30000" version="1.0"/>
 	 
 
 </beans>

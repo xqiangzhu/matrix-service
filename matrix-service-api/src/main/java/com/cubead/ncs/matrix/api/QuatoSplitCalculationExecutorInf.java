@@ -13,11 +13,21 @@ import com.cubead.ncs.matrix.api.SqlDismantling.QueryUnit;
 public interface QuatoSplitCalculationExecutorInf {
 
     /**
-     * 查询多表结果并合并计算，以jsonobject集合返回
+     * 查询多表结果并合并计算，分页集合返回
      * 
      * @author kangye
      * @param quotaunits
      * @return
      */
-    List<JSONObject> calculatAllMergeResultSetAsJsonObjects(QueryUnit... quotaunits);
+    public DubboResult<PageResult> calculatAllMergeResultSetAsJsonObjects(Integer limitInteger, QueryUnit... quotaunits);
+
+    /**
+     * 查询结果合并必要的数据
+     * 
+     * @author kangye
+     * @param quotaunits
+     * @return
+     */
+    public List<JSONObject> calculatLimitMergeResultSetAsJsonObjects(QueryUnit... quotaunits);
+
 }

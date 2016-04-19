@@ -25,7 +25,7 @@
 	<dubbo:protocol name="dubbo" port="20880" />
 	
 	<!-- 公用服务 -->
-	<dubbo:service interface="com.cubead.ncs.matrix.api.QuatoSplitCalculationExecutorInf" ref="pubService" registry="Iprovider" />
+	<dubbo:service interface="com.cubead.ncs.matrix.api.QuatoSplitCalculationExecutorInf" ref="pubService" registry="Iprovider" version="1.0" />
 	<bean id="pubService" class="com.cubead.ncs.matrix.provider.out.QuatoSplitCalculationExecutorImpl" />
 	
 	

@@ -30,9 +30,9 @@ import com.cubead.ncs.matrix.api.SqlDismantling.QueryUnit;
  * @author kangye
  */
 @Component
-public class QuatoSplitCalculationExecutor {
+public class QuatoSplitCalculationWithCountExecutor {
 
-    private static final Logger logger = LoggerFactory.getLogger(QuatoSplitCalculationExecutor.class);
+    private static final Logger logger = LoggerFactory.getLogger(QuatoSplitCalculationWithCountExecutor.class);
 
     private static ExecutorService executorService = new ThreadPoolExecutor(10, 30, 10, TimeUnit.SECONDS,
             new LinkedBlockingDeque<Runnable>());
@@ -51,7 +51,7 @@ public class QuatoSplitCalculationExecutor {
         final CountDownLatch latch = new CountDownLatch(quotaunits.length);
 
         for (int i = 0; i < sqlDismantlings.length; i++) {
-            executorService.execute(new CalculatSqlRowTask(sqlDismantlings[i], rowMergeResultSet, latch));
+            executorService.execute(new CalculatSqlRowTaskWithCount(sqlDismantlings[i], rowMergeResultSet, latch));
         }
 
         try {
@@ -64,13 +64,13 @@ public class QuatoSplitCalculationExecutor {
 
     }
 
-    class CalculatSqlRowTask implements Runnable {
+    class CalculatSqlRowTaskWithCount implements Runnable {
 
         private RowMergeResultSet rowMergeResultSet;
         private CountDownLatch latch;
         private SqlDismantling sqlDismantling;
 
-        public CalculatSqlRowTask(SqlDismantling sqlDismantling, RowMergeResultSet rowMergeResultSet,
+        public CalculatSqlRowTaskWithCount(SqlDismantling sqlDismantling, RowMergeResultSet rowMergeResultSet,
                 CountDownLatch latch) {
             super();
             this.rowMergeResultSet = rowMergeResultSet;
@@ -80,22 +80,11 @@ public class QuatoSplitCalculationExecutor {
 
         @Override
         public void run() {
+
             final Dimension dimension = new Dimension(sqlDismantling.getFields());
+
             jdbcTemplate.query(sqlDismantling.getQueryUnit().getSql(), new ResultSetExtractor<Object>() {
                 public Object extractData(ResultSet resultSet) throws SQLException, DataAccessException {
-
-                    // 当存在limit语句未运行完,非limit查询将等待limit计算完成
-                    if (sqlDismantling.isLimitUnit() == false && rowMergeResultSet.getLimitHasFinished() == false
-                            && rowMergeResultSet.exitLimitedUnit()) {
-
-                        try {
-                            synchronized (rowMergeResultSet.getLimitHasFinished()) {
-                                rowMergeResultSet.getLimitHasFinished().wait();
-                            }
-                        } catch (InterruptedException e) {
-                            logger.error("{}异常中断:{}", sqlDismantling.getQueryUnit().getSql(), e.getMessage());
-                        }
-                    }
 
                     int rowNumber = 0;
                     while (resultSet.next()) {
@@ -108,15 +97,9 @@ public class QuatoSplitCalculationExecutor {
                             quotaWithValues.add(quotaWithValue);
                         }
                         sqlRowResultMapping.setQuotaWithValues(quotaWithValues);
-                        rowMergeResultSet.addRowMergeResult(sqlRowResultMapping, sqlDismantling.isLimitUnit());
+                        rowMergeResultSet.addRowMergeResultWithAllCount(sqlRowResultMapping,
+                                sqlDismantling.getIsOrderUnit());
                         rowNumber++;
-                    }
-
-                    if (sqlDismantling.isLimitUnit()) {
-                        synchronized (rowMergeResultSet.getLimitHasFinished()) {
-                            rowMergeResultSet.getLimitHasFinished().notifyAll();
-                            rowMergeResultSet.setLimitHasFinished(true);
-                        }
                     }
 
                     logger.debug("{}执行结束,加载数据行是:{}", sqlDismantling.getQueryUnit().getSql(), rowNumber);
@@ -124,6 +107,7 @@ public class QuatoSplitCalculationExecutor {
                     return null;
                 }
             });
+
         }
     }
 

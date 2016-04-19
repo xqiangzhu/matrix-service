@@ -53,7 +53,7 @@ public class QuatoSplitCalculationExecutorTest extends BaseTest {
     @Test
     public void calculatAllMergeResultSetAsJsonObjectsTest() {
 
-        List<JSONObject> josnRows = quatoSplitCalculationExecutorInf.calculatAllMergeResultSetAsJsonObjects(
+        List<JSONObject> josnRows = quatoSplitCalculationExecutorInf.calculatLimitMergeResultSetAsJsonObjects(
                 roiQueryUnit, compressedQueryUnit, pvQueryUnit);
 
         logger.info("查询结果合集:{}", josnRows.size());

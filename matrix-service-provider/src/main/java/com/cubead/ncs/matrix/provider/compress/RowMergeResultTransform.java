@@ -46,6 +46,30 @@ public class RowMergeResultTransform {
         return rows;
     }
 
+    /**
+     * 将结果转化为JSON串数组
+     * 
+     * @author kangye
+     * @param rowMergeResultSet
+     * @return
+     */
+    public List<JSONObject> transFormRowResultSetAsAJsonObjects(int limit, RowMergeResultSet rowMergeResultSet) {
+
+        if (rowMergeResultSet == null)
+            return null;
+
+        List<JSONObject> rows = new ArrayList<>();
+        Map<String, Double[]> rowMapSetMap = rowMergeResultSet.getRowQuotaSetMap();
+
+        for (int i = 0; i < limit; i++) {
+            String key = rowMergeResultSet.getOrderKeys().get(i);
+            RowMergeResult rowMergeResult = new RowMergeResult(key, rowMapSetMap.get(key));
+            rows.add(transFormRowResultAsAJsonObject(rowMergeResult, rowMergeResultSet.getFieldList()));
+        }
+
+        return rows;
+    }
+
     public JSONObject transFormRowResultAsAJsonObject(RowMergeResult row, TreeSet<String> fields) {
 
         JSONObject jsonObject = new JSONObject();

@@ -1,5 +1,6 @@
 package com.cubead.ncs.matrix.provider.exec;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
@@ -24,10 +25,11 @@ public class RowMergeResultSet {
     private Map<String, Double[]> rowQuotaSetMap = new ConcurrentHashMap<String, Double[]>();
     private TreeSet<String> fieldList = new TreeSet<String>();
     private volatile Boolean limitHasFinished = false;
-    private volatile boolean noLimitedUnit = false;
+    private volatile boolean exitLimitedUnit = false;
+    private volatile List<String> orderKeys = new ArrayList<>(20000);
 
     // 线程是尽量小,减少和DB查询线程抢占CPU
-    private static ExecutorService executorService = Executors.newFixedThreadPool(2);
+    private static ExecutorService executorService = Executors.newFixedThreadPool(10);
 
     public RowMergeResultSet() {
         super();
@@ -41,6 +43,14 @@ public class RowMergeResultSet {
         this.limitHasFinished = limitHasFinished;
     }
 
+    public boolean exitLimitedUnit() {
+        return exitLimitedUnit;
+    }
+
+    public List<String> getOrderKeys() {
+        return orderKeys;
+    }
+
     /**
      * 添加结果行,将其合并到, 在limit的情况下不适合这样处理
      * 
@@ -48,15 +58,19 @@ public class RowMergeResultSet {
      * @param sqlRowResultMapping
      * @param IsLimitUnit
      */
-    @Deprecated
-    public void addRowMergeResult2(final SQLRowResultMapping sqlRowResultMapping) {
+    public void addRowMergeResultWithAllCount(final SQLRowResultMapping sqlRowResultMapping, final boolean isOrderUnit) {
+
+        final String key = sqlRowResultMapping.getDimension().parseAsKey();
+
+        // 这里不需要考虑同步问题，业务限制只有一个order任务，会被顺序插入
+        if (isOrderUnit) {
+            orderKeys.add(key);
+        }
 
         executorService.execute(new Runnable() {
             public void run() {
 
                 Thread.yield();
-
-                final String key = sqlRowResultMapping.getDimension().parseAsKey();
                 Double[] values = rowQuotaSetMap.get(key);
 
                 if (null == values) {
@@ -84,8 +98,9 @@ public class RowMergeResultSet {
         Double[] values = rowQuotaSetMap.get(key);
 
         if (null == values) {
-            // 在有limit情况下，如果在原集合中未找到将不做任何处理
-            if (isLimitUnit == false && limitHasFinished == true)
+
+            // 当存在limit,limit已经计算完,对非limit结果如果新数据在原set中不存在,直接返回,不会合并
+            if (exitLimitedUnit && limitHasFinished && isLimitUnit == false)
                 return;
 
             // 新增
@@ -154,8 +169,8 @@ public class RowMergeResultSet {
             throw new IllegalArgumentException("queryUnit 中在多个limit");
         }
 
-        if (limitUnitCount == 0) {
-            limitHasFinished = true;
+        if (limitUnitCount == 1) {
+            exitLimitedUnit = true;
         }
 
         return sqlDismantlings;

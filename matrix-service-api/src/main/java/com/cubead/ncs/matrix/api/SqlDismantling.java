@@ -19,10 +19,15 @@ public class SqlDismantling {
     private TreeSet<String> allFields;
     private Set<Quota> quotas;
     private Boolean isLimitUnit = false;
+    private Boolean isOrderUnit = false;
 
     public SqlDismantling(QueryUnit queryUnit) {
         this.queryUnit = queryUnit;
         validateQuotaSql();
+    }
+
+    public Boolean getIsOrderUnit() {
+        return isOrderUnit;
     }
 
     public QueryUnit getQueryUnit() {
@@ -50,6 +55,7 @@ public class SqlDismantling {
         int startIndex = lowSql.indexOf(" select ") + 8;
         int endIndex = lowSql.indexOf(" from ");
         int limitIndex = lowSql.indexOf(" limit ");
+        int orderIndex = lowSql.indexOf(" order ");
 
         Set<Quota> quotasInUnit = queryUnit.getQuotas();
         String[] fieldSet = lowSql.substring(startIndex, endIndex).split(",");
@@ -87,6 +93,10 @@ public class SqlDismantling {
 
         if (limitIndex > -1) {
             this.isLimitUnit = true;
+        }
+
+        if (orderIndex > -1) {
+            this.isOrderUnit = true;
         }
 
         // logger.debug("sql:{},解析的字段是:{}", queryUnit.getSql(), getFields());
