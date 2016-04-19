@@ -8,6 +8,8 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.alibaba.fastjson.JSONObject;
+import com.cubead.ncs.matrix.api.DubboResult;
+import com.cubead.ncs.matrix.api.PageResult;
 import com.cubead.ncs.matrix.api.QuatoSplitCalculationExecutorInf;
 import com.cubead.ncs.matrix.api.Quota;
 import com.cubead.ncs.matrix.api.SqlDismantling.QueryUnit;
@@ -50,7 +52,7 @@ public class QuatoSplitCalculationExecutorTest extends BaseTest {
 
     }
 
-    @Test
+    // @Test
     public void calculatAllMergeResultSetAsJsonObjectsTest() {
 
         List<JSONObject> josnRows = quatoSplitCalculationExecutorInf.calculatLimitMergeResultSetAsJsonObjects(
@@ -58,5 +60,15 @@ public class QuatoSplitCalculationExecutorTest extends BaseTest {
 
         logger.info("查询结果合集:{}", josnRows.size());
         logger.info("数据结果展示:{}", CollectionUtils.isEmpty(josnRows) ? null : josnRows.get(0));
+    }
+
+    @Test
+    public void calculatLimitMergeResultSetAsJsonObjectsTest() {
+
+        DubboResult<PageResult> josnRows = quatoSplitCalculationExecutorInf.calculatAllMergeResultSetAsJsonObjects(10,
+                roiQueryUnit, compressedQueryUnit, pvQueryUnit);
+
+        logger.info("查询结果合集:{}", josnRows.getResultStatus());
+        logger.info("数据结果展示:{}", josnRows);
     }
 }

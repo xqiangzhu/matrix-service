@@ -1,5 +1,6 @@
 package com.cubead.ncs.matrix.api;
 
+import java.io.Serializable;
 import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
@@ -9,8 +10,9 @@ import com.alibaba.fastjson.JSONObject;
  * 
  * @author kangye
  */
-public class PageResult {
+public class PageResult implements Serializable {
 
+    private static final long serialVersionUID = 2438117307901024000L;
     // 分页的结果
     private List<JSONObject> pageResult;
     // 总量
