@@ -39,7 +39,7 @@ public class QuatoSplitCalculationExecutorTest extends BaseTest {
         roiQueryUnit = new QueryUnit();
         roiQueryUnit.setSql(new StringBuilder()
                 .append("SELECT sub_tenant_id, campaign, adgroup, keyword, sum(costs_per_click) roi ")
-                .append(" from ca_summary_136191_roi ").append(" where log_day >= 10000 AND log_day <= 100005 ")
+                .append(" from ca_summary_136191_roi ").append(" where log_day >= 0 AND log_day <= 55 ")
                 .append(" GROUP BY sub_tenant_id, campaign, adgroup, keyword  order by roi").toString());
         roiQueryUnit.setQuotas(Quota.ROI);
 
@@ -68,10 +68,12 @@ public class QuatoSplitCalculationExecutorTest extends BaseTest {
 
         // 获取结果集
         RowMergeResultSet rowMergeResultSet = quatoSplitCalculationExecutor.calculatAllMergeResultSet(roiQueryUnit,
-                compressedQueryUnit, pvQueryUnit);
+                pvQueryUnit, compressedQueryUnit);
+        logger.debug("获取结果集:{}", rowMergeResultSet.getRowQuotaSetMap().size());
 
         // 将结果转化为JSON串数组
         List<JSONObject> josnRows = resultTransform.transFormRowResultSetAsAJsonObjects(rowMergeResultSet);
+        logger.debug("将结果转化为JSON串数组:{}", josnRows.size());
 
         logger.info("查询结果合集:{}", josnRows.size());
         logger.info("数据结果展示:{}", CollectionUtils.isEmpty(josnRows) ? null : josnRows.get(0));

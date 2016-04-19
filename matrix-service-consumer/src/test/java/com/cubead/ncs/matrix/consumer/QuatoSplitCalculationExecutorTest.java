@@ -28,8 +28,8 @@ public class QuatoSplitCalculationExecutorTest extends BaseTest {
         roiQueryUnit = new QueryUnit();
         roiQueryUnit.setSql(new StringBuilder()
                 .append("SELECT sub_tenant_id, campaign, adgroup, keyword, sum(costs_per_click) roi ")
-                .append(" from ca_summary_136191_roi ").append(" where log_day >= 10000 AND log_day <= 100005 ")
-                .append(" GROUP BY sub_tenant_id, campaign, adgroup, keyword  order by roi").toString());
+                .append(" from ca_summary_136191_roi ").append(" where log_day >= 6 AND log_day <= 55 ")
+                .append(" GROUP BY sub_tenant_id, campaign, adgroup, keyword  order by roi limit 10").toString());
         roiQueryUnit.setQuotas(Quota.ROI);
 
         // compressed
@@ -52,6 +52,7 @@ public class QuatoSplitCalculationExecutorTest extends BaseTest {
 
     @Test
     public void calculatAllMergeResultSetAsJsonObjectsTest() {
+
         List<JSONObject> josnRows = quatoSplitCalculationExecutorInf.calculatAllMergeResultSetAsJsonObjects(
                 roiQueryUnit, compressedQueryUnit, pvQueryUnit);
 

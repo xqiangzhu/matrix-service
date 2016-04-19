@@ -1,5 +1,6 @@
 package com.cubead.ncs.matrix.api;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
@@ -92,7 +93,9 @@ public class SqlDismantling {
         // logger.debug("sql:{},解析的维度是:{}", queryUnit.getSql(), getQuotas());
     }
 
-    public static class QueryUnit {
+    public static class QueryUnit implements Serializable {
+
+        private static final long serialVersionUID = 6072111871217409049L;
 
         private String sql;
         private Set<Quota> quotas;

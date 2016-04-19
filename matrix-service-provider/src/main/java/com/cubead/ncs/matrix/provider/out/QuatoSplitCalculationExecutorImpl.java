@@ -2,16 +2,21 @@ package com.cubead.ncs.matrix.provider.out;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.alibaba.fastjson.JSONObject;
 import com.cubead.ncs.matrix.api.QuatoSplitCalculationExecutorInf;
 import com.cubead.ncs.matrix.api.SqlDismantling.QueryUnit;
 import com.cubead.ncs.matrix.provider.compress.RowMergeResultTransform;
+import com.cubead.ncs.matrix.provider.exec.MatrixTableSearch;
 import com.cubead.ncs.matrix.provider.exec.QuatoSplitCalculationExecutor;
 import com.cubead.ncs.matrix.provider.exec.RowMergeResultSet;
 
 public class QuatoSplitCalculationExecutorImpl implements QuatoSplitCalculationExecutorInf {
+
+    private static final Logger logger = LoggerFactory.getLogger(MatrixTableSearch.class);
 
     @Autowired
     private QuatoSplitCalculationExecutor quatoSplitCalculationExecutor;
@@ -27,9 +32,11 @@ public class QuatoSplitCalculationExecutorImpl implements QuatoSplitCalculationE
 
         // 获取结果集
         RowMergeResultSet rowMergeResultSet = quatoSplitCalculationExecutor.calculatAllMergeResultSet(quotaunits);
+        logger.debug("获取结果集:{}", rowMergeResultSet.getRowQuotaSetMap().size());
 
         // 将结果转化为JSON串数组
         List<JSONObject> josnRows = resultTransform.transFormRowResultSetAsAJsonObjects(rowMergeResultSet);
+        logger.debug("将结果转化为JSON串数组:{}", josnRows.size());
 
         return josnRows;
     }
