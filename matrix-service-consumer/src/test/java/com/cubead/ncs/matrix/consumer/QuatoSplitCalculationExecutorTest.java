@@ -62,7 +62,7 @@ public class QuatoSplitCalculationExecutorTest extends BaseTest {
 
     }
 
-    // 按limit计算
+    // 容错性测试, 按limit计算
     @Test
     public void calculatAllMergeResultSetAsJsonObjectsTest() {
 
@@ -100,11 +100,10 @@ public class QuatoSplitCalculationExecutorTest extends BaseTest {
         logger.info("数据结果展示:{}", josnRows.getBean().getPageResult().get(0));
     }
 
-    // 分组计算
+    // 两次计算同一组查询, 第二次从缓存中取 , 分组计算
     @Test
     public void calculatLimitMergeResultSetAsJsonObjectsInCacheTest() {
 
-        long temp = current_time;
         current_time = System.currentTimeMillis();
         DubboResult<PageResult> josnRows = quatoSplitCalculationExecutorInf.calculatAllMergeResultSetAsJsonObjects(1,
                 10, roiQueryUnit, compressedQueryUnit, pvQueryUnit, uvQueryUnit);
@@ -131,11 +130,10 @@ public class QuatoSplitCalculationExecutorTest extends BaseTest {
 
         logger.info("第二次运算时长:{}ms", System.currentTimeMillis() - current_time);
         logger.info("数据结果展示:{}", josnRows.getBean().getPageResult().get(0));
-        // 修正计算时间
-        current_time = temp;
+
     }
 
-    // 传一个错误的sql 表名错误
+    // 容错性测试 传一个错误的sql 表名错误
     @Test
     public void calculatAllMergeResultSetAsJsonObjectsTestWithWrongSql() {
 
