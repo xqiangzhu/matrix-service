@@ -3,7 +3,7 @@ package com.cubead.ncs.matrix.consumer;
 import java.util.List;
 
 import org.junit.Assert;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -23,8 +23,8 @@ public class QuatoSplitCalculationExecutorTest extends BaseTest {
     private static QueryUnit compressedQueryUnit;
     private static QueryUnit pvQueryUnit;
 
-    @BeforeClass
-    public static void initQueryUnit() {
+    @Before
+    public void initQueryUnit() {
 
         // roi init
         roiQueryUnit = new QueryUnit();
@@ -52,15 +52,6 @@ public class QuatoSplitCalculationExecutorTest extends BaseTest {
 
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void calculatAllMergeResultSetAsJsonObjectsTestInWrongQuato() {
-
-        compressedQueryUnit.setQuotas(Quota.COST);
-        quatoSplitCalculationExecutorInf.calculatLimitMergeResultSetAsJsonObjects(roiQueryUnit, compressedQueryUnit,
-                pvQueryUnit);
-
-    }
-
     @Test
     public void calculatAllMergeResultSetAsJsonObjectsTest() {
 
@@ -73,6 +64,15 @@ public class QuatoSplitCalculationExecutorTest extends BaseTest {
 
         logger.info("查询结果合集:{}", josnRows);
         logger.info("数据结果展示:{}", josnRows);
+
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void calculatAllMergeResultSetAsJsonObjectsTestInWrongQuato() {
+
+        compressedQueryUnit.setQuotas(Quota.COST);
+        quatoSplitCalculationExecutorInf.calculatLimitMergeResultSetAsJsonObjects(roiQueryUnit, compressedQueryUnit,
+                pvQueryUnit);
 
     }
 
