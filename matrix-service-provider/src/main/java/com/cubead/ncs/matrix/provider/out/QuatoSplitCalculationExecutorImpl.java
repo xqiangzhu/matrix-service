@@ -14,7 +14,6 @@ import com.cubead.ncs.matrix.api.PageResult;
 import com.cubead.ncs.matrix.api.QuatoSplitCalculationExecutorInf;
 import com.cubead.ncs.matrix.api.SqlDismantling.QueryUnit;
 import com.cubead.ncs.matrix.provider.compress.RowMergeResultTransform;
-import com.cubead.ncs.matrix.provider.exec.MatrixTableSearch;
 import com.cubead.ncs.matrix.provider.exec.QuatoSplitCalculationExecutor;
 import com.cubead.ncs.matrix.provider.exec.QuatoSplitCalculationWithCountExecutor;
 import com.cubead.ncs.matrix.provider.exec.RowMergeResultSet;
@@ -22,7 +21,7 @@ import com.cubead.ncs.matrix.provider.exec.RowMergeResultSet;
 @Component
 public class QuatoSplitCalculationExecutorImpl implements QuatoSplitCalculationExecutorInf {
 
-    private static final Logger logger = LoggerFactory.getLogger(MatrixTableSearch.class);
+    private static final Logger logger = LoggerFactory.getLogger(QuatoSplitCalculationExecutorImpl.class);
 
     @Autowired
     private QuatoSplitCalculationExecutor quatoSplitCalculationExecutor;
@@ -66,8 +65,7 @@ public class QuatoSplitCalculationExecutorImpl implements QuatoSplitCalculationE
             // 获取结果集
             RowMergeResultSet rowMergeResultSet = quatoSplitCalculationWithCountExecutor
                     .calculatAllMergeResultSet(quotaunits);
-            int size = rowMergeResultSet.getRowQuotaSetMap().size();
-            pageResult.setCount(size);
+            pageResult.setCount(rowMergeResultSet.getRowQuotaSetMap().size());
 
             // 将结果转化为JSON串数组
             List<JSONObject> josnRows = resultTransform.transFormRowResultSetAsAJsonObjects(limit, rowMergeResultSet);

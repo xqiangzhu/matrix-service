@@ -1,5 +1,7 @@
 package com.cubead.matrix.providertest.base;
 
+import java.util.concurrent.ThreadFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 
@@ -29,5 +31,26 @@ public class AlterTableEnginTest extends BaseTest {
             jdbcTemplate.execute(alterSql);
             logger.info("{}更新成功!", alterSql);
         }
+    }
+
+    class ConcereteUncaughtExceptionHandler implements Thread.UncaughtExceptionHandler {
+        @Override
+        public void uncaughtException(Thread thread, Throwable exception) {
+            System.out.println("thread id:" + thread.getId() + " name:" + thread.getName() + " exception_message:"
+                    + exception.getMessage());
+        }
+
+    }
+
+    class ConcereteThreadFactory implements ThreadFactory {
+
+        @Override
+        public Thread newThread(Runnable runnable) {
+            Thread thread = new Thread(runnable);
+            thread.setUncaughtExceptionHandler(new ConcereteUncaughtExceptionHandler());
+            return thread;
+
+        }
+
     }
 }

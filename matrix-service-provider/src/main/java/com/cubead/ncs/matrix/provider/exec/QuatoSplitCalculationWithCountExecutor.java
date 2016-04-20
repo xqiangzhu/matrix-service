@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -34,11 +35,32 @@ public class QuatoSplitCalculationWithCountExecutor {
 
     private static final Logger logger = LoggerFactory.getLogger(QuatoSplitCalculationWithCountExecutor.class);
 
-    private static ExecutorService executorService = new ThreadPoolExecutor(10, 30, 10, TimeUnit.SECONDS,
-            new LinkedBlockingDeque<Runnable>());
-
     @Autowired
     JdbcTemplate jdbcTemplate;
+
+    private static ExecutorService executorService = new ThreadPoolExecutor(10, 30, 10, TimeUnit.SECONDS,
+            new LinkedBlockingDeque<Runnable>(), new ConcereteThreadFactory());
+
+    static class ConcereteUncaughtExceptionHandler implements Thread.UncaughtExceptionHandler {
+        @Override
+        public void uncaughtException(Thread thread, Throwable exception) {
+            System.out.println("thread id:" + thread.getId() + " name:" + thread.getName() + " exception_message:"
+                    + exception.getMessage());
+        }
+
+    }
+
+    static class ConcereteThreadFactory implements ThreadFactory {
+
+        @Override
+        public Thread newThread(Runnable runnable) {
+            Thread thread = new Thread(runnable);
+            thread.setUncaughtExceptionHandler(new ConcereteUncaughtExceptionHandler());
+            return thread;
+
+        }
+
+    }
 
     public RowMergeResultSet calculatAllMergeResultSet(QueryUnit... quotaunits) {
 

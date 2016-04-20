@@ -2,8 +2,8 @@ package com.cubead.matrix.providertest.base;
 
 import java.util.List;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.junit.BeforeClass;
+import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -23,8 +23,8 @@ public class QuatoSplitCalculationExecutor extends BaseTest {
     private static QueryUnit compressedQueryUnit;
     private static QueryUnit pvQueryUnit;
 
-    @BeforeClass
-    public static void initQueryUnit() {
+    @Before
+    public void initQueryUnit() {
 
         // roi init
         roiQueryUnit = new QueryUnit();
@@ -52,14 +52,28 @@ public class QuatoSplitCalculationExecutor extends BaseTest {
 
     }
 
-    // @Test
+    @Test
     public void calculatAllMergeResultSetAsJsonObjectsTest() {
 
+        roiQueryUnit.setSql(roiQueryUnit.getSql() + " limit 10 ");
         List<JSONObject> josnRows = quatoSplitCalculationExecutorInf.calculatLimitMergeResultSetAsJsonObjects(
                 roiQueryUnit, compressedQueryUnit, pvQueryUnit);
 
-        logger.info("查询结果合集:{}", josnRows.size());
-        logger.info("数据结果展示:{}", CollectionUtils.isEmpty(josnRows) ? null : josnRows.get(0));
+        Assert.assertNotNull(josnRows);
+        Assert.assertEquals(josnRows.size(), 10);
+
+        logger.info("查询结果合集:{}", josnRows);
+        logger.info("数据结果展示:{}", josnRows);
+
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void calculatAllMergeResultSetAsJsonObjectsTestInWrongQuato() {
+
+        compressedQueryUnit.setQuotas(Quota.COST);
+        quatoSplitCalculationExecutorInf.calculatLimitMergeResultSetAsJsonObjects(roiQueryUnit, compressedQueryUnit,
+                pvQueryUnit);
+
     }
 
     @Test
@@ -67,6 +81,9 @@ public class QuatoSplitCalculationExecutor extends BaseTest {
 
         DubboResult<PageResult> josnRows = quatoSplitCalculationExecutorInf.calculatAllMergeResultSetAsJsonObjects(10,
                 roiQueryUnit, compressedQueryUnit, pvQueryUnit);
+
+        Assert.assertNotNull(josnRows);
+        Assert.assertEquals(josnRows.getBean().getPageResult().size(), 10);
 
         logger.info("查询结果合集:{}", josnRows.getResultStatus());
         logger.info("数据结果展示:{}", josnRows);
