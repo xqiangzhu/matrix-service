@@ -1,15 +1,16 @@
 package com.cubead.ncs.matrix.provider.exec;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import org.apache.commons.collections.CollectionUtils;
 
+import com.cubead.ncs.matrix.api.DubboResult;
+import com.cubead.ncs.matrix.api.PageResult;
 import com.cubead.ncs.matrix.api.Quota;
 import com.cubead.ncs.matrix.api.QuotaWithValue;
 import com.cubead.ncs.matrix.api.SqlDismantling;
@@ -20,16 +21,23 @@ import com.cubead.ncs.matrix.api.SqlDismantling.QueryUnit;
  * 
  * @author kangye
  */
-public class RowMergeResultSet {
+public class RowMergeResultSet implements Serializable {
 
+    private static final long serialVersionUID = 1163471114733383569L;
     private Map<String, Double[]> rowQuotaSetMap = new ConcurrentHashMap<String, Double[]>();
     private TreeSet<String> fieldList = new TreeSet<String>();
     private volatile Boolean limitHasFinished = false;
     private volatile boolean exitLimitedUnit = false;
     private volatile List<String> orderKeys = new ArrayList<>(20000);
+    private volatile DubboResult<PageResult> dubboResult = new DubboResult<PageResult>();
 
-    // 线程是尽量小,减少和DB查询线程抢占CPU
-    private static ExecutorService executorService = Executors.newFixedThreadPool(10);
+    public DubboResult<PageResult> getDubboResult() {
+        return dubboResult;
+    }
+
+    public void setDubboResult(DubboResult<PageResult> dubboResult) {
+        this.dubboResult = dubboResult;
+    }
 
     public RowMergeResultSet() {
         super();
@@ -67,29 +75,31 @@ public class RowMergeResultSet {
             orderKeys.add(key);
         }
 
-        executorService.execute(new Runnable() {
-            public void run() {
+        Double[] values = rowQuotaSetMap.get(key);
 
-                Thread.yield();
-                Double[] values = rowQuotaSetMap.get(key);
+        if (null == values) {
+            // 新增
+            values = initZeroFullValues();
+        }
 
-                if (null == values) {
-                    // 新增
-                    values = initZeroFullValues();
-                }
+        List<QuotaWithValue> quotaWithValues = sqlRowResultMapping.getQuotaWithValues();
+        if (CollectionUtils.isEmpty(quotaWithValues))
+            throw new IllegalArgumentException("sqlRowResultMapping不存在指标值");
 
-                List<QuotaWithValue> quotaWithValues = sqlRowResultMapping.getQuotaWithValues();
-                if (CollectionUtils.isEmpty(quotaWithValues))
-                    throw new IllegalArgumentException("sqlRowResultMapping不存在指标值");
+        for (QuotaWithValue quotaWithValue : quotaWithValues) {
+            Integer seialNumber = quotaWithValue.getQuota().getSeialNumber();
+            values[seialNumber] += quotaWithValue.getValue();
+        }
 
-                for (QuotaWithValue quotaWithValue : quotaWithValues) {
-                    Integer seialNumber = quotaWithValue.getQuota().getSeialNumber();
-                    values[seialNumber] += quotaWithValue.getValue();
-                }
+        rowQuotaSetMap.put(key, values);
 
-                rowQuotaSetMap.put(key, values);
-            }
-        });
+        // executorService.execute(new Runnable() {
+        // public void run() {
+        //
+        // Thread.yield();
+        //
+        // }
+        // });
     }
 
     public void addRowMergeResult(final SQLRowResultMapping sqlRowResultMapping, final Boolean isLimitUnit) {

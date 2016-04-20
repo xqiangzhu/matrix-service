@@ -78,13 +78,7 @@
 			<artifactId>aspectjweaver</artifactId>
 			<version>${aspectj.version}</version>
 		</dependency>
-		<!--jedis -->
-		<dependency>
-			<groupId>redis.clients</groupId>
-			<artifactId>jedis</artifactId>
-			<version>${jedis.version}</version>
-		</dependency>
-		<!-- Log start -->
+		<!-- Log start 
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
@@ -110,7 +104,7 @@
 			<artifactId>logback-classic</artifactId>
 			<version>${logback.version}</version>
 		</dependency>
-		<!-- Log end -->
+		 Log end -->
 
 		<!-- mybatis -->
 		<dependency>
@@ -245,6 +239,25 @@
 			<groupId>com.googlecode.disruptor</groupId>
 			<artifactId>disruptor</artifactId>
 			<version>2.10.4</version>
+		</dependency>
+		
+		<!-- 添加memcached依赖 -->
+		<dependency>
+			<groupId>com.googlecode.xmemcached</groupId>
+			<artifactId>xmemcached</artifactId>
+			<version>${xmemcached.version}</version>
+		</dependency>
+		<!-- redis support -->
+		<dependency>
+			<groupId>redis.clients</groupId>
+			<artifactId>jedis</artifactId>
+			<version>${jedis.version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-redis</artifactId>
+			<version>1.2.1.RELEASE</version>
 		</dependency>
 	</dependencies>
 

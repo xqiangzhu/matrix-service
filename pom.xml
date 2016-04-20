@@ -109,6 +109,8 @@
 		<upacp-version>1.0.0</upacp-version>
 		<!-- activemq -->
 		<activemq.version>5.7.0</activemq.version>
+		
+		<xmemcached.version>1.4.3</xmemcached.version>
 
 		<!-- Common libs -->
 		<dubbo_version>2.4.9</dubbo_version>

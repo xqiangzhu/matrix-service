@@ -8,37 +8,37 @@
 		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.2.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd
 		http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-3.2.xsd
-		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.2.xsd" >
-	
-	<aop:aspectj-autoproxy/>
-	
-	<!--context:property-placeholder location="classpath:i-dubbo/*.properties" system-properties-mode="FALLBACK" /-->
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.2.xsd">
+
+	<aop:aspectj-autoproxy />
+
+	<!--context:property-placeholder location="classpath:i-dubbo/*.properties" 
+		system-properties-mode="FALLBACK" / -->
 	<!-- 自定义属性文件加载类 -->
-	<bean id="selfPropertyPlaceholderConfigurer" class="com.cubead.ncs.matrix.provider.aop.SelfPropertyPlaceholderConfigurer">
+	<bean id="selfPropertyPlaceholderConfigurer"
+		class="com.cubead.ncs.matrix.provider.aop.SelfPropertyPlaceholderConfigurer">
 		<property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_FALLBACK" />
 		<property name="locations">
 			<list>
-                <value>classpath:m-dubbo/*.properties</value>
-            </list>
+				<value>classpath:m-dubbo/*.properties</value>
+			</list>
 		</property>
 	</bean>
-	
+
 	<context:component-scan base-package="com.cubead" />
 
 	<!-- 配置数据源 -->
 	<bean name="dataSourceOne" class="com.alibaba.druid.pool.DruidDataSource"
 		init-method="init" destroy-method="close">
-		  
-		 <!--
-		<property name="url" value="jdbc:mysql://211.151.170.197/cubead_ep_test?characterEncoding=UTF-8" /> 
-		 <property name="username" value="root" /> 
-		 <property name="password" value="pasWd238" /> 
-		 -->
+
+		<!-- <property name="url" value="jdbc:mysql://211.151.170.197/cubead_ep_test?characterEncoding=UTF-8" 
+			/> <property name="username" value="root" /> <property name="password" value="pasWd238" 
+			/> -->
 		<property name="url"
 			value="jdbc:mysql://172.16.250.235/cubead_ep_test?characterEncoding=UTF-8" />
 		<property name="username" value="root" />
 		<property name="password" value="kevin" />
-		
+
 		<property name="initialSize" value="30" />
 		<property name="maxActive" value="200" />
 		<property name="minIdle" value="10" />
@@ -55,9 +55,44 @@
 		<property name="filters" value="mergeStat" />
 	</bean>
 
-	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate" lazy-init="false">
+	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate"
+		lazy-init="false">
 		<property name="dataSource" ref="dataSourceOne" />
 	</bean>
-	
-	<import resource="spring-dubbo.xml"/>
+
+	<bean name="memcachedClientBuilder" class="net.rubyeye.xmemcached.XMemcachedClientBuilder">
+		<constructor-arg>
+			<list>
+				<bean class="java.net.InetSocketAddress">
+					<constructor-arg>
+						<value>${memcached.server.address}</value>
+					</constructor-arg>
+					<constructor-arg>
+						<value>${memcached.server.port}</value>
+					</constructor-arg>
+				</bean>
+			</list>
+		</constructor-arg>
+		<constructor-arg>
+			<list>
+				<value>1</value>
+			</list>
+		</constructor-arg>
+		<property name="connectionPoolSize" value="${memcached.server.conn.size}"></property>
+		<property name="commandFactory">
+			<bean class="net.rubyeye.xmemcached.command.BinaryCommandFactory"></bean>
+		</property>
+		<property name="sessionLocator">
+			<bean class="net.rubyeye.xmemcached.impl.KetamaMemcachedSessionLocator"></bean>
+		</property>
+		<property name="transcoder">
+			<bean class="net.rubyeye.xmemcached.transcoders.SerializingTranscoder" />
+		</property>
+	</bean>
+
+	<!-- Use factory bean to build memcached client -->
+	<bean name="memcachedClient" factory-bean="memcachedClientBuilder"
+		factory-method="build" destroy-method="shutdown" />
+
+	<import resource="spring-dubbo.xml" />
 </beans>

@@ -36,7 +36,7 @@
 		</encoder>
 	</appender>
 
-<!-- 将日志发送到日志服务器   -->
+	<!-- 将日志发送到日志服务器   -->
 	<appender name="SYSLOG" class="ch.qos.logback.classic.net.SyslogAppender">
 	        <syslogHost>192.168.111.82</syslogHost>
 	        <port>12345</port>

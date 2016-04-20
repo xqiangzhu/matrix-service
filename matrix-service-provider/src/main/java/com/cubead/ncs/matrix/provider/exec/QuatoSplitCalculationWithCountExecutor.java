@@ -20,6 +20,7 @@ import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
 
 import com.cubead.ncs.matrix.api.Dimension;
+import com.cubead.ncs.matrix.api.DubboResult.ResultStatus;
 import com.cubead.ncs.matrix.api.Quota;
 import com.cubead.ncs.matrix.api.QuotaWithValue;
 import com.cubead.ncs.matrix.api.SqlDismantling;
@@ -79,7 +80,7 @@ public class QuatoSplitCalculationWithCountExecutor {
         try {
             latch.await();
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            throw new RuntimeException("运行异常:" + e.getMessage());
         }
 
         return rowMergeResultSet;
@@ -104,32 +105,41 @@ public class QuatoSplitCalculationWithCountExecutor {
         public void run() {
 
             final Dimension dimension = new Dimension(sqlDismantling.getFields());
-
-            jdbcTemplate.query(sqlDismantling.getQueryUnit().getSql(), new ResultSetExtractor<Object>() {
-                public Object extractData(ResultSet resultSet) throws SQLException, DataAccessException {
-
-                    int rowNumber = 0;
-                    while (resultSet.next()) {
-                        dimension.inizValues(resultSet);
-                        SQLRowResultMapping sqlRowResultMapping = new SQLRowResultMapping(dimension);
-                        List<QuotaWithValue> quotaWithValues = new ArrayList<>();
-                        for (Quota quota : sqlDismantling.getQuotas()) {
-                            QuotaWithValue quotaWithValue = new QuotaWithValue(quota);
-                            quotaWithValue.setValue(resultSet.getDouble(quota.getQuota()));
-                            quotaWithValues.add(quotaWithValue);
-                        }
-                        sqlRowResultMapping.setQuotaWithValues(quotaWithValues);
-                        rowMergeResultSet.addRowMergeResultWithAllCount(sqlRowResultMapping,
-                                sqlDismantling.getIsOrderUnit());
-                        rowNumber++;
+            final String sql = sqlDismantling.getQueryUnit().getSql();
+            try {
+                jdbcTemplate.query(sql, new ResultSetExtractor<Object>() {
+                    public Object extractData(ResultSet resultSet) throws SQLException, DataAccessException {
+                        combinedCalculatResult(dimension, resultSet);
+                        return null;
                     }
-
-                    logger.debug("{}执行结束,加载数据行是:{}", sqlDismantling.getQueryUnit().getSql(), rowNumber);
-                    latch.countDown();
-                    return null;
+                });
+            } catch (Exception e) {
+                logger.error("{}执行异常:{}", sql, e);
+                synchronized (rowMergeResultSet) {
+                    rowMergeResultSet.getDubboResult().setMessageAndStatus(e.getMessage(), ResultStatus.FAIL);
                 }
-            });
+            } finally {
+                latch.countDown();
+            }
+        }
 
+        private void combinedCalculatResult(final Dimension dimension, ResultSet resultSet) throws SQLException {
+            int rowNumber = 0;
+            while (resultSet.next()) {
+                dimension.inizValues(resultSet);
+                SQLRowResultMapping sqlRowResultMapping = new SQLRowResultMapping(dimension);
+                List<QuotaWithValue> quotaWithValues = new ArrayList<>();
+                for (Quota quota : sqlDismantling.getQuotas()) {
+                    QuotaWithValue quotaWithValue = new QuotaWithValue(quota);
+                    quotaWithValue.setValue(resultSet.getDouble(quota.getQuota()));
+                    quotaWithValues.add(quotaWithValue);
+                }
+                sqlRowResultMapping.setQuotaWithValues(quotaWithValues);
+                rowMergeResultSet.addRowMergeResultWithAllCount(sqlRowResultMapping, sqlDismantling.getIsOrderUnit());
+                rowNumber++;
+            }
+
+            logger.debug("{}执行结束,加载数据行是:{}", sqlDismantling.getQueryUnit().getSql(), rowNumber);
         }
     }
 

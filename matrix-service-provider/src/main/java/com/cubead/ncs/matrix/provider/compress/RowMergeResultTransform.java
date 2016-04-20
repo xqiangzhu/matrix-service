@@ -23,6 +23,8 @@ public class RowMergeResultTransform {
     // TODO 注入redis缓存
     //
 
+    private final static int THREAD_RESULT_WAIT_TIME = 10;
+
     /**
      * 将结果转化为JSON串数组
      * 
@@ -53,17 +55,25 @@ public class RowMergeResultTransform {
      * @param rowMergeResultSet
      * @return
      */
-    public List<JSONObject> transFormRowResultSetAsAJsonObjects(int limit, RowMergeResultSet rowMergeResultSet) {
+    public List<JSONObject> transFormRowResultSetAsAJsonObjects(int start, int end, RowMergeResultSet rowMergeResultSet)
+            throws InterruptedException {
 
         if (rowMergeResultSet == null)
             return null;
 
         List<JSONObject> rows = new ArrayList<>();
         Map<String, Double[]> rowMapSetMap = rowMergeResultSet.getRowQuotaSetMap();
+        int length = rowMergeResultSet.getOrderKeys().size();
 
-        for (int i = 0; i < limit; i++) {
+        if (end > length)
+            end = length;
+        if (start > length)
+            throw new IllegalArgumentException("传入参数的起始位置超过并集的最大长度");
+
+        for (int i = start; i <= end; i++) {
             String key = rowMergeResultSet.getOrderKeys().get(i);
-            RowMergeResult rowMergeResult = new RowMergeResult(key, rowMapSetMap.get(key));
+            Double[] value = rowMapSetMap.get(key);
+            RowMergeResult rowMergeResult = new RowMergeResult(key, value);
             rows.add(transFormRowResultAsAJsonObject(rowMergeResult, rowMergeResultSet.getFieldList()));
         }
 

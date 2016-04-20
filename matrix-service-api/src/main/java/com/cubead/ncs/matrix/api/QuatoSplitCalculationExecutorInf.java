@@ -19,7 +19,8 @@ public interface QuatoSplitCalculationExecutorInf {
      * @param quotaunits
      * @return
      */
-    public DubboResult<PageResult> calculatAllMergeResultSetAsJsonObjects(Integer limitInteger, QueryUnit... quotaunits);
+    public DubboResult<PageResult> calculatAllMergeResultSetAsJsonObjects(Integer page, Integer limitInteger,
+            QueryUnit... quotaunits);
 
     /**
      * 查询结果合并必要的数据
