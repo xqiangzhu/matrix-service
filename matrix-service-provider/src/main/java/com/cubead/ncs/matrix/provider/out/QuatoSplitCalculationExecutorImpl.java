@@ -74,8 +74,6 @@ public class QuatoSplitCalculationExecutorImpl implements QuatoSplitCalculationE
         try {
 
             final String unitsHashCodeString = generterHashCode(quotaunits);
-            logger.debug("当前查询hash:{}", unitsHashCodeString);
-
             // 缓存中查是否刚被检索过
             RowMergeResultSet rowMergeResultSet = memcachedClient.get(unitsHashCodeString);
 
@@ -91,8 +89,8 @@ public class QuatoSplitCalculationExecutorImpl implements QuatoSplitCalculationE
                 executorService.execute(new Runnable() {
                     public void run() {
                         try {
+                            logger.info("设置{}缓存,存储30秒", unitsHashCodeString);
                             memcachedClient.set(unitsHashCodeString, 30, rowMergeResultSetNew, 1500);
-                            logger.debug("设置{}缓存,存储30秒", unitsHashCodeString);
                         } catch (Exception e) {
                             logger.warn("{}未正确的缓存结果", unitsHashCodeString);
                         }
@@ -100,6 +98,8 @@ public class QuatoSplitCalculationExecutorImpl implements QuatoSplitCalculationE
                 });
 
                 rowMergeResultSet = rowMergeResultSetNew;
+            } else {
+                logger.info("key:{}缓存命中", unitsHashCodeString);
             }
 
             pageResult.setCount(rowMergeResultSet.getRowQuotaSetMap().size());
