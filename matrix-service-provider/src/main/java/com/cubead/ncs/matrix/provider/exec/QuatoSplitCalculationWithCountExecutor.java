@@ -106,9 +106,11 @@ public class QuatoSplitCalculationWithCountExecutor {
 
             final Dimension dimension = new Dimension(sqlDismantling.getFields());
             final String sql = sqlDismantling.getQueryUnit().getSql();
+            final long current_time = System.currentTimeMillis();
             try {
                 jdbcTemplate.query(sql, new ResultSetExtractor<Object>() {
                     public Object extractData(ResultSet resultSet) throws SQLException, DataAccessException {
+                        logger.debug("{}查询耗时：{}ms", sql, (System.currentTimeMillis() - current_time));
                         combinedCalculatResult(dimension, resultSet);
                         return null;
                     }

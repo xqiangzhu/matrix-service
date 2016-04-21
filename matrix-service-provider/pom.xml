@@ -99,12 +99,13 @@
 			<artifactId>jul-to-slf4j</artifactId>
 			<version>${slf4j.version}</version>
 		</dependency>
+		Log end -->
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
 			<version>${logback.version}</version>
 		</dependency>
-		 Log end -->
+		 
 
 		<!-- mybatis -->
 		<dependency>

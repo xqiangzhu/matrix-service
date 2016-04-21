@@ -16,6 +16,8 @@ public class SqlRandomGenerator {
     public static String[] qutas = { "cost", "pv", "uv", "impressions" };
     public final static int split_table_numbers = 10;
     public static String[] qutas_verticals = { "compressed", "pv", "uv", "roi" };
+    public final static int log_day_start_count = 59;
+    public final static int log_day_end_count = 418;
 
     public static String[] generteVerticalsSql() {
 
@@ -86,9 +88,16 @@ public class SqlRandomGenerator {
     }
 
     public static StringBuilder generteWhereLogDay() {
+        return generteWhereLogDay(1, 1);
+    }
 
-        int start = new Random().nextInt(10) + 1;
-        int end = start + (new Random().nextInt(30) + 30);
+    public static StringBuilder generteWhereLogDay(int startPartition, int partitionLength) {
+
+        int start = new Random().nextInt(10) + (startPartition - 1) * 30 + 59;
+        int end = start + (partitionLength - 1) * 30 + new Random().nextInt(20);
+
+        if (end > 419)
+            end = 419;
 
         StringBuilder sb = new StringBuilder();
 
@@ -182,6 +191,42 @@ public class SqlRandomGenerator {
 
     }
 
+    public static String[] genertePartitionSqls(int start, int end) {
+
+        if (end > log_day_end_count)
+            end = log_day_end_count;
+        if (start < log_day_start_count)
+            start = log_day_start_count;
+
+        int partitionLength = (end - start) / 30 + 1;
+
+        String[] sqls = new String[partitionLength];
+
+        StringBuilder groupSql = SqlRandomGenerator.generteGroupSQl();
+        for (int i = 0; i < partitionLength; i++) {
+
+            int temp_start = i * 30 + log_day_start_count;
+            int temp_end = temp_start + 30;
+
+            if (temp_start < start)
+                temp_start = start;
+
+            if (temp_end > end)
+                temp_end = end;
+
+            StringBuilder spBuilder = new StringBuilder();
+            spBuilder.append("SELECT sub_tenant_id, campaign, adgroup, keyword, sum(costs_per_click) roi ")
+                    .append(" from ca_summary_136191_compressed_1yr ").append(" where log_day > ")
+                    .append(temp_start - 1).append(" and log_day < ").append(temp_end).append(" ").append(groupSql)
+                    .append("  ");
+
+            sqls[i] = spBuilder.toString();
+            spBuilder = null;
+        }
+
+        return sqls;
+    }
+
     public static void main(String[] args) {
 
         for (String sql : generTenRandomSql()) {
@@ -190,6 +235,10 @@ public class SqlRandomGenerator {
 
         for (String sql : updateEnginesSql(TableEngine.InnoDB)) {
             System.out.println(sql);
+        }
+
+        for (String s : genertePartitionSqls(20, 500)) {
+            System.out.println(s);
         }
     }
 }

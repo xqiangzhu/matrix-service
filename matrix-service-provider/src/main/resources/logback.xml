@@ -32,7 +32,9 @@
 		</encoder>
 	</appender>
 	
-
+	<logger name="com.google" level="info" />
+    <logger name="net" level="info" />
+    
 	<!-- project default level -->
 	<logger name="com.cubead" level="debug" />
 	

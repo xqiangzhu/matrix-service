@@ -30,15 +30,18 @@
 	<!-- 配置数据源 -->
 	<bean name="dataSourceOne" class="com.alibaba.druid.pool.DruidDataSource"
 		init-method="init" destroy-method="close">
-
 		<!-- <property name="url" value="jdbc:mysql://211.151.170.197/cubead_ep_test?characterEncoding=UTF-8" 
 			/> <property name="username" value="root" /> <property name="password" value="pasWd238" 
 			/> -->
+
 		<property name="url"
 			value="jdbc:mysql://172.16.250.235/cubead_ep_test?characterEncoding=UTF-8" />
 		<property name="username" value="root" />
 		<property name="password" value="kevin" />
-
+		
+		<!-- <property name="url" value="jdbc:mysql://211.151.170.200/cubead_ep_test?characterEncoding=UTF-8" 
+			/> <property name="username" value="db_test" /> <property name="password" 
+			value="PASdb01" /> -->
 		<property name="initialSize" value="30" />
 		<property name="maxActive" value="200" />
 		<property name="minIdle" value="10" />
