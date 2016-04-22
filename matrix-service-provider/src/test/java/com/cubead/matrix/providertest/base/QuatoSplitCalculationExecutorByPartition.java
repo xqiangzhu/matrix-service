@@ -12,6 +12,7 @@ import com.cubead.ncs.matrix.api.PageResult;
 import com.cubead.ncs.matrix.api.QuatoSplitCalculationExecutorInf;
 import com.cubead.ncs.matrix.api.Quota;
 import com.cubead.ncs.matrix.api.SqlDismantling.QueryUnit;
+import com.cubead.ncs.matrix.provider.exec.SqlRandomGenerator;
 
 public class QuatoSplitCalculationExecutorByPartition extends BaseTest {
 
@@ -25,7 +26,7 @@ public class QuatoSplitCalculationExecutorByPartition extends BaseTest {
     // 查询数据开始分区
     private static int start_partition = 1;
     // 查询的数据跨越多少个区
-    private static int partition_length = 5;
+    private static int partition_length = 11;
 
     @Before
     public void initQueryUnit() {
@@ -69,7 +70,7 @@ public class QuatoSplitCalculationExecutorByPartition extends BaseTest {
         Assert.assertNotNull(josnRows);
         Assert.assertEquals(josnRows.getBean().getPageResult().size(), 10);
 
-        logger.info("数据结果展示:{}", josnRows.getBean().getPageResult().get(0));
+        logger.info("数据结果展示:{}", josnRows.getBean());
     }
 
     // 两次计算同一组查询, 第二次从缓存中取 , 分组计算

@@ -14,6 +14,8 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
 
+import com.cubead.ncs.matrix.provider.exec.SqlRandomGenerator;
+
 public class PartitionMutilThreadQueryTest extends BaseTest {
 
     @Autowired

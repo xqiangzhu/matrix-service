@@ -25,6 +25,7 @@ import com.cubead.ncs.matrix.api.Quota;
 import com.cubead.ncs.matrix.api.QuotaWithValue;
 import com.cubead.ncs.matrix.api.SqlDismantling;
 import com.cubead.ncs.matrix.api.SqlDismantling.QueryUnit;
+import com.cubead.ncs.matrix.provider.tools.Contants;
 
 /**
  * 分表执行引擎
@@ -39,7 +40,7 @@ public class QuatoSplitCalculationWithCountExecutor {
     @Autowired
     JdbcTemplate jdbcTemplate;
 
-    private static ExecutorService executorService = new ThreadPoolExecutor(10, 30, 10, TimeUnit.SECONDS,
+    private static ExecutorService executorService = new ThreadPoolExecutor(30, 100, 10, TimeUnit.SECONDS,
             new LinkedBlockingDeque<Runnable>(), new ConcereteThreadFactory());
 
     static class ConcereteUncaughtExceptionHandler implements Thread.UncaughtExceptionHandler {
@@ -101,32 +102,18 @@ public class QuatoSplitCalculationWithCountExecutor {
             this.sqlDismantling = sqlDismantling;
         }
 
-        @Override
-        public void run() {
-
-            final Dimension dimension = new Dimension(sqlDismantling.getFields());
-            final String sql = sqlDismantling.getQueryUnit().getSql();
-            final long current_time = System.currentTimeMillis();
-            try {
-                jdbcTemplate.query(sql, new ResultSetExtractor<Object>() {
-                    public Object extractData(ResultSet resultSet) throws SQLException, DataAccessException {
-                        logger.debug("{}查询耗时：{}ms", sql, (System.currentTimeMillis() - current_time));
-                        combinedCalculatResult(dimension, resultSet);
-                        return null;
-                    }
-                });
-            } catch (Exception e) {
-                logger.error("{}执行异常:{}", sql, e);
-                synchronized (rowMergeResultSet) {
-                    rowMergeResultSet.getDubboResult().setMessageAndStatus(e.getMessage(), ResultStatus.FAIL);
+        private void queryResultAndComniedCalculat(final Dimension dimension, final long current_time,
+                final String partitionSql) {
+            jdbcTemplate.query(partitionSql, new ResultSetExtractor<Object>() {
+                public Object extractData(ResultSet resultSet) throws SQLException, DataAccessException {
+                    logger.debug("{}查询耗时：{}ms", partitionSql, (System.currentTimeMillis() - current_time));
+                    combinedCalculatResult(dimension, resultSet);
+                    return null;
                 }
-            } finally {
-                latch.countDown();
-            }
+            });
         }
 
         private void combinedCalculatResult(final Dimension dimension, ResultSet resultSet) throws SQLException {
-            int rowNumber = 0;
             while (resultSet.next()) {
                 dimension.inizValues(resultSet);
                 SQLRowResultMapping sqlRowResultMapping = new SQLRowResultMapping(dimension);
@@ -138,10 +125,56 @@ public class QuatoSplitCalculationWithCountExecutor {
                 }
                 sqlRowResultMapping.setQuotaWithValues(quotaWithValues);
                 rowMergeResultSet.addRowMergeResultWithAllCount(sqlRowResultMapping, sqlDismantling.getIsOrderUnit());
-                rowNumber++;
             }
 
-            logger.debug("{}执行结束,加载数据行是:{}", sqlDismantling.getQueryUnit().getSql(), rowNumber);
+        }
+
+        public void run() {
+
+            final Dimension dimension = new Dimension(sqlDismantling.getFields());
+            final String sql = sqlDismantling.getQueryUnit().getSql();
+            final long current_time = System.currentTimeMillis();
+
+            try {
+                // 分拆成分区查询语句
+                final String[] parationSqls = SqlRandomGenerator.generatPartitionSql(sql);
+
+                if (!"on".equals(Contants.PARTITION_PARALLEL_COMPUTING_SUPPORT) || parationSqls.length == 1) {
+                    // 仍然在一个分区上
+                    queryResultAndComniedCalculat(dimension, current_time, sql);
+                } else {
+                    final CountDownLatch subCountDownLatch = new CountDownLatch(parationSqls.length);
+                    for (int i = 0; i < parationSqls.length; i++) {
+                        final String partitionSql = parationSqls[i];
+                        executorService.execute(new Runnable() {
+                            public void run() {
+                                try {
+                                    queryResultAndComniedCalculat(dimension, current_time, partitionSql);
+                                } catch (Exception e) {
+                                    queryExceptionRecode(partitionSql, e);
+                                } finally {
+                                    subCountDownLatch.countDown();
+                                }
+                            }
+                        });
+
+                    }
+                    subCountDownLatch.await();
+
+                }
+
+            } catch (Exception e) {
+                queryExceptionRecode(sql, e);
+            } finally {
+                latch.countDown();
+            }
+        }
+
+        private void queryExceptionRecode(final String partitionSql, Exception e) {
+            logger.error("{}执行异常:{}", partitionSql, e);
+            synchronized (rowMergeResultSet) {
+                rowMergeResultSet.getDubboResult().setMessageAndStatus(e.getMessage(), ResultStatus.FAIL);
+            }
         }
     }
 

@@ -22,6 +22,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
 
+import com.cubead.ncs.matrix.provider.exec.SqlRandomGenerator;
 import com.cubead.ncs.matrix.provider.exec.MatrixTableSearch.Dimen;
 import com.cubead.ncs.matrix.provider.exec.MatrixTableSearch.Dimension;
 import com.cubead.ncs.matrix.provider.exec.MatrixTableSearch.Quota;

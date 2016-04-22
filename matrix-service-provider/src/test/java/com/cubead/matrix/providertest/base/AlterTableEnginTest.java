@@ -4,7 +4,8 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import com.cubead.matrix.providertest.base.SqlRandomGenerator.TableEngine;
+import com.cubead.ncs.matrix.provider.exec.SqlRandomGenerator;
+import com.cubead.ncs.matrix.provider.exec.SqlRandomGenerator.TableEngine;
 
 /**
  * 修改表引擎,慎重使用

@@ -48,6 +48,12 @@ public final class Contants {
      */
     public final static int LOG_DAY_END_COUNT = Integer.parseInt(prop.getProperty("LOG_DAY_END_COUNT"));
 
+    /**
+     * partition support
+     */
+    public final static String PARTITION_PARALLEL_COMPUTING_SUPPORT = prop
+            .getProperty("PARTITION_PARALLEL_COMPUTING_SUPPORT");
+
     public static void main(String[] args) {
         System.out.println(Contants.LOG_DAY_END_COUNT);
     }
