@@ -35,7 +35,7 @@
 			/> <property name="username" value="root" /> <property name="password" value="pasWd238" 
 			/> -->
 		<property name="url"
-			value="jdbc:mysql://172.16.250.235/cubead_ep_test?characterEncoding=UTF-8" />
+			value="jdbc:mysql://172.16.1.206/cubead_ep_test?characterEncoding=UTF-8" />
 		<property name="username" value="root" />
 		<property name="password" value="kevin" />
 

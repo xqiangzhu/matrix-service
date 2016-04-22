@@ -19,14 +19,17 @@ public class PartitionMutilThreadQueryTest extends BaseTest {
     @Autowired
     JdbcTemplate jdbcTemplate;
 
-    private static ExecutorService executorService = new ThreadPoolExecutor(10, 30, 10, TimeUnit.SECONDS,
+    private static ExecutorService executorService = new ThreadPoolExecutor(13, 30, 10, TimeUnit.SECONDS,
             new LinkedBlockingDeque<Runnable>());
+
+    private int start_day = 30;
+    private int end_day = 418;
 
     // 按每个区多线程并行执行
     @Test
     public void queryTimeCost() {
         logger.info("-------------------------------按每个区多线程并行执行------------------------");
-        String[] sqls = SqlRandomGenerator.genertePartitionSqls(12, 500);
+        String[] sqls = SqlRandomGenerator.genertePartitionSqls(start_day, end_day);
         final CountDownLatch latch = new CountDownLatch(sqls.length);
 
         for (final String sql : sqls) {
@@ -61,10 +64,10 @@ public class PartitionMutilThreadQueryTest extends BaseTest {
     }
 
     // 按每个区分区执行
-    @Test
+    // @Test
     public void randomExecuOnce() {
         logger.info("-------------------------------按每个区分区执行------------------------");
-        String[] sqls = SqlRandomGenerator.genertePartitionSqls(12, 500);
+        String[] sqls = SqlRandomGenerator.genertePartitionSqls(start_day, end_day);
         for (String sql : sqls) {
             long time = System.currentTimeMillis();
             jdbcTemplate.query(sql, new ResultSetExtractor<Object>() {
@@ -78,7 +81,7 @@ public class PartitionMutilThreadQueryTest extends BaseTest {
     }
 
     // 在大表上执行一个全区查询
-    @Test
+    // @Test
     public void exeInWholeSql() {
         logger.info("-------------------------------在大表上执行一个全区查询------------------------");
         String sql = "SELECT sub_tenant_id, campaign, adgroup, keyword, sum(costs_per_click) roi  from ca_summary_136191_compressed_1yr  where log_day > 30 and log_day < 418 GROUP BY campaign, keyword, sub_tenant_id, adgroup";

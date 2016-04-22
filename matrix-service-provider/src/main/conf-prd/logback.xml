@@ -1,20 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 	<jmxConfigurator />
-	<property name="log_home" value="/data/Idubbo/logs/idubbo" />
-<!--
+    <property name="log_home" value="/usr/local/tomcat-8280/logs/ischedule" />
 	<appender name="console" class="ch.qos.logback.core.ConsoleAppender">
 		<encoder charset="UTF-8">
 			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{80} - %msg%n</pattern>
 		</encoder>
 	</appender>
-
--->
+	
 	<appender name="rollingFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<file>${log_home}/info/info.log</file>
+		<file>${log_home}/info/ischedule.log</file>
 		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-			<fileNamePattern>${log_home}/info/info.%d{yyyy-MM-dd}.log</fileNamePattern>
-			<maxHistory>15</maxHistory>
+			<fileNamePattern>${log_home}/info/ischedule.%d{yyyy-MM-dd}.log</fileNamePattern>
 		</rollingPolicy>
 		<encoder charset="UTF-8">
 			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{80} - %msg%n</pattern>
@@ -25,41 +22,36 @@
 			<level>ERROR</level>
 			<onMatch>ACCEPT</onMatch>
 			<onMismatch>DENY</onMismatch>
-		</filter>
-		<file>${log_home}/error/error.log</file>
+        </filter>
+		<file>${log_home}/error/errorischedule.log</file>
 		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-			<fileNamePattern>${log_home}/error/error.%d{yyyy-MM-dd}.log</fileNamePattern>
-			<maxHistory>15</maxHistory>
+			<fileNamePattern>${log_home}/error/errorischedule.%d{yyyy-MM-dd}.log</fileNamePattern>
 		</rollingPolicy>
 		<encoder charset="UTF-8">
 			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{80} - %msg%n</pattern>
 		</encoder>
 	</appender>
-
-	<!-- 将日志发送到日志服务器   -->
-	<appender name="SYSLOG" class="ch.qos.logback.classic.net.SyslogAppender">
-	        <syslogHost>192.168.111.82</syslogHost>
-	        <port>12345</port>
-	        <facility>LOCAL4</facility>
-	        <suffixPattern>[%thread] %-5level %logger - %msg%n</suffixPattern>
-	</appender> 
-
-	<!-- root -->
-	<root level="DEBUG">
-	<!--	<appender-ref ref="console" /> -->
-		<appender-ref ref="SYSLOG" />
-		<appender-ref ref="rollingFile" /> 
-		<appender-ref ref="errorRollingFile"/> 
-	</root>
-
-	<!-- project default level -->
-	<logger name="com.ishidai" level="DEBUG" />
-	<!-- 下面配置一些第三方包的日志过滤级别，用于避免刷屏 -->
-	<logger name="org.apache" level="DEBUG" />
-	<logger name="com.alibaba.dubbo" level="ERROR" />
-	<logger name="org.apache.activemq" level="ERROR" />
-	<logger name="org.apache.zookeeper" level="ERROR" />
-	<logger name="org.springframework" level="DEBUG" />
-	<logger name="org.mybatis.spring" level="DEBUG" />
 	
+	<logger name="com.google" level="info" />
+    <logger name="net" level="info" />
+    
+	<!-- project default level -->
+	<logger name="com.cubead" level="debug" />
+	
+	<!-- root -->
+	<root level="debug">
+		<appender-ref ref="console" />
+		<appender-ref ref="rollingFile" />
+		<appender-ref ref="errorRollingFile" />
+	</root>
+	
+	<!-- 下面配置一些第三方包的日志过滤级别，用于避免刷屏 -->
+ 
+   <logger name="org.springframework" level="info"/>
+   <logger name="com.opensymphony" level="info"/>
+   <logger name="org.apache" level="info"/>
+   <logger name="org.mybatis.spring" level="info"/>
+   <logger name="org.apache.zookeeper" level="info"/>
+   <logger name="com.cubead.performance.martix.QuatoSplitCalculationExecutor" level="debug"/>
+   
 </configuration>

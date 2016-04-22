@@ -21,6 +21,7 @@ import com.cubead.ncs.matrix.provider.compress.RowMergeResultTransform;
 import com.cubead.ncs.matrix.provider.exec.QuatoSplitCalculationExecutor;
 import com.cubead.ncs.matrix.provider.exec.QuatoSplitCalculationWithCountExecutor;
 import com.cubead.ncs.matrix.provider.exec.RowMergeResultSet;
+import com.cubead.ncs.matrix.provider.tools.Contants;
 
 @Component
 public class QuatoSplitCalculationExecutorImpl implements QuatoSplitCalculationExecutorInf {
@@ -40,7 +41,7 @@ public class QuatoSplitCalculationExecutorImpl implements QuatoSplitCalculationE
     private MemcachedClient memcachedClient;
 
     // 线程是尽量小,减少和DB查询线程抢占CPU
-    private static ExecutorService executorService = Executors.newFixedThreadPool(1);
+    private static ExecutorService signleExecutorService = Executors.newSingleThreadExecutor();
 
     @Override
     public List<JSONObject> calculatLimitMergeResultSetAsJsonObjects(QueryUnit... quotaunits) {
@@ -85,12 +86,14 @@ public class QuatoSplitCalculationExecutorImpl implements QuatoSplitCalculationE
                 if (DubboResult.ResultStatus.FAIL.equals(rowMergeResultSetNew.getDubboResult().getResultStatus())) {
                     return rowMergeResultSetNew.getDubboResult();
                 }
-                // 异步保存结果
-                executorService.execute(new Runnable() {
+                // 异步缓存结果
+                signleExecutorService.execute(new Runnable() {
                     public void run() {
                         try {
-                            logger.info("设置{}缓存,存储30秒", unitsHashCodeString);
-                            memcachedClient.set(unitsHashCodeString, 30, rowMergeResultSetNew, 1500);
+                            logger.info("设置{}缓存,存储{}秒", unitsHashCodeString,
+                                    Contants.QUERYUNITS_RESULT_CACHE_TIME_IN_SECOND);
+                            memcachedClient.set(unitsHashCodeString, Contants.QUERYUNITS_RESULT_CACHE_TIME_IN_SECOND,
+                                    rowMergeResultSetNew, 1500);
                         } catch (Exception e) {
                             logger.warn("{}未正确的缓存结果", unitsHashCodeString);
                         }
