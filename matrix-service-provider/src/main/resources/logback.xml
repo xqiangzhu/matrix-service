@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 	<jmxConfigurator />
-    <property name="log_home" value="/usr/local/tomcat-8280/logs/ischedule" />
+    <property name="log_home" value="/usr/local/matrix-service/logs/" />
 	<appender name="console" class="ch.qos.logback.core.ConsoleAppender">
 		<encoder charset="UTF-8">
 			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{80} - %msg%n</pattern>
@@ -9,9 +9,9 @@
 	</appender>
 	
 	<appender name="rollingFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<file>${log_home}/info/ischedule.log</file>
+		<file>${log_home}/info/matrix_info.log</file>
 		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-			<fileNamePattern>${log_home}/info/ischedule.%d{yyyy-MM-dd}.log</fileNamePattern>
+			<fileNamePattern>${log_home}/info/matrix_error.%d{yyyy-MM-dd}.log</fileNamePattern>
 		</rollingPolicy>
 		<encoder charset="UTF-8">
 			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{80} - %msg%n</pattern>
@@ -23,17 +23,14 @@
 			<onMatch>ACCEPT</onMatch>
 			<onMismatch>DENY</onMismatch>
         </filter>
-		<file>${log_home}/error/errorischedule.log</file>
+		<file>${log_home}/error/matrix_error.log</file>
 		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-			<fileNamePattern>${log_home}/error/errorischedule.%d{yyyy-MM-dd}.log</fileNamePattern>
+			<fileNamePattern>${log_home}/error/matrix_error.%d{yyyy-MM-dd}.log</fileNamePattern>
 		</rollingPolicy>
 		<encoder charset="UTF-8">
 			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{80} - %msg%n</pattern>
 		</encoder>
 	</appender>
-	
-	<logger name="com.google" level="info" />
-    <logger name="net" level="info" />
     
 	<!-- project default level -->
 	<logger name="com.cubead" level="debug" />
@@ -52,6 +49,8 @@
    <logger name="org.apache" level="info"/>
    <logger name="org.mybatis.spring" level="info"/>
    <logger name="org.apache.zookeeper" level="info"/>
-   <logger name="com.cubead.performance.martix.QuatoSplitCalculationExecutor" level="debug"/>
-   
+   <logger name="com.cubead.ncs.matrix" level="debug"/>
+   <logger name="com.google" level="info" />
+   <logger name="net" level="info" />
+    
 </configuration>

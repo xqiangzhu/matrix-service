@@ -1,4 +1,4 @@
-package com.cubead.ncs.matrix.provider.tools;
+package com.cubead.ncs.matrix.consumer;
 
 import java.io.InputStream;
 import java.net.URLDecoder;
@@ -49,13 +49,12 @@ public final class Contants {
     public final static int LOG_DAY_END_COUNT = Integer.parseInt(prop.getProperty("LOG_DAY_END_COUNT"));
 
     /**
-     * 是否支持分区并行计算
+     * partition support
      */
-    public final static Boolean PARTITION_PARALLEL_COMPUTING_SUPPORT = "on".equals(prop
-            .getProperty("PARTITION_PARALLEL_COMPUTING_SUPPORT"));
+    public final static String PARTITION_PARALLEL_COMPUTING_SUPPORT = prop
+            .getProperty("PARTITION_PARALLEL_COMPUTING_SUPPORT");
 
-    /**
-     * 默认数据分页大小
-     */
-    public final static int PAGE_LIMIT_DEFAULT = Integer.parseInt(prop.getProperty("PAGE_LIMIT_DEFAULT"));
+    public static void main(String[] args) {
+        System.out.println(Contants.LOG_DAY_END_COUNT);
+    }
 }

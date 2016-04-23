@@ -22,7 +22,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
 
-import com.cubead.ncs.matrix.provider.exec.SqlRandomGenerator;
+import com.cubead.ncs.matrix.provider.exec.SqlGenerator;
 import com.cubead.ncs.matrix.provider.exec.MatrixTableSearch.Dimen;
 import com.cubead.ncs.matrix.provider.exec.MatrixTableSearch.Dimension;
 import com.cubead.ncs.matrix.provider.exec.MatrixTableSearch.Quota;
@@ -48,7 +48,7 @@ public class MutilthreadVariationTest extends BaseTest {
     public void sqlExcuteTimeMilis() {
         long t1 = System.currentTimeMillis();
         final Dimension dimension = new Dimension("sub_tenant_id", "campaign", "adgroup", "keyword");
-        List<QuotaField> quotaFields = jdbcTemplate.query(SqlRandomGenerator.generteSql("ca_summary_136191_pv_1"),
+        List<QuotaField> quotaFields = jdbcTemplate.query(SqlGenerator.generteSql("ca_summary_136191_pv_1"),
                 new ResultSetExtractor<List<QuotaField>>() {
                     public List<QuotaField> extractData(ResultSet resultSet) throws SQLException, DataAccessException {
                         List<QuotaField> quotaFields = new ArrayList<>();
@@ -62,7 +62,7 @@ public class MutilthreadVariationTest extends BaseTest {
     @Test
     public void sqlExcuteTimeMilisWithTenSql() {
         long t1 = System.currentTimeMillis();
-        for (final String sql : SqlRandomGenerator.generTenRandomSql()) {
+        for (final String sql : SqlGenerator.generTenRandomSql()) {
             logger.info(sql);
             jdbcTemplate.query(sql, new ResultSetExtractor<List<QuotaField>>() {
                 public List<QuotaField> extractData(ResultSet resultSet) throws SQLException, DataAccessException {
@@ -83,7 +83,7 @@ public class MutilthreadVariationTest extends BaseTest {
                 executorService);
         long t1 = System.currentTimeMillis();
 
-        for (final String sql : SqlRandomGenerator.generTenRandomSql()) {
+        for (final String sql : SqlGenerator.generTenRandomSql()) {
             logger.info(sql);
             completionService.submit(new Callable<List<QuotaField>>() {
                 public List<QuotaField> call() throws Exception {
@@ -102,7 +102,7 @@ public class MutilthreadVariationTest extends BaseTest {
 
         List<QuotaField> allQuotaFields = new ArrayList<>();
 
-        for (int i = 0; i < SqlRandomGenerator.split_table_numbers; i++) {
+        for (int i = 0; i < SqlGenerator.split_table_numbers; i++) {
             try {
                 List<QuotaField> quotaFields = completionService.take().get();
                 // logger.info("子表查询结果：{}", quotaFields);
@@ -129,7 +129,7 @@ public class MutilthreadVariationTest extends BaseTest {
         long t1 = System.currentTimeMillis();
         final BlockingQueue<ResultSet> resultSets = new ArrayBlockingQueue<ResultSet>(10);
 
-        for (final String sql : SqlRandomGenerator.generTenRandomSql()) {
+        for (final String sql : SqlGenerator.generTenRandomSql()) {
             logger.info(sql);
             executorService.execute(new Runnable() {
                 public void run() {
@@ -154,7 +154,7 @@ public class MutilthreadVariationTest extends BaseTest {
 
         List<ResultSet> allQuotaFields = new ArrayList<>();
 
-        for (int i = 0; i < SqlRandomGenerator.split_table_numbers; i++) {
+        for (int i = 0; i < SqlGenerator.split_table_numbers; i++) {
             try {
                 ResultSet quotaFields = resultSets.take();
                 // logger.info("子表查询结果：{}", quotaFields);
@@ -184,7 +184,7 @@ public class MutilthreadVariationTest extends BaseTest {
                     throws Exception {
                 // System.out.println("Sequence: " + sequence);
                 // System.out.println("ValueEvent: " + event.getValue().size());
-                if (indexInEvent.incrementAndGet() == SqlRandomGenerator.split_table_numbers) {
+                if (indexInEvent.incrementAndGet() == SqlGenerator.split_table_numbers) {
                     logger.info("sqlExecuteMutilThreadTimeWithAsyBlockingQueen ten sql查询耗时:{}",
                             (System.currentTimeMillis() - t1) + " ms");
                 }
@@ -195,7 +195,7 @@ public class MutilthreadVariationTest extends BaseTest {
         final RingBuffer<QutotaEvent> ringBuffer = disruptor.start();
         final Dimension dimension = new Dimension("sub_tenant_id", "campaign", "adgroup", "keyword");
 
-        for (final String sql : SqlRandomGenerator.generTenRandomSql()) {
+        for (final String sql : SqlGenerator.generTenRandomSql()) {
             logger.info(sql);
             executorService.execute(new Runnable() {
                 public void run() {
@@ -239,12 +239,12 @@ public class MutilthreadVariationTest extends BaseTest {
     // @Test
     public void sqlExecuteMutilThreadTimeTestForCountDownLunch() {
 
-        final CountDownLatch latch = new CountDownLatch(SqlRandomGenerator.split_table_numbers);
+        final CountDownLatch latch = new CountDownLatch(SqlGenerator.split_table_numbers);
         long t1 = System.currentTimeMillis();
         List<QuotaField> allQuotaFields = new ArrayList<>();
         final Dimension dimension = new Dimension("sub_tenant_id", "campaign", "adgroup", "keyword");
 
-        for (final String sql : SqlRandomGenerator.generTenRandomSql()) {
+        for (final String sql : SqlGenerator.generTenRandomSql()) {
             executorService.execute(new Runnable() {
 
                 @Override
@@ -288,7 +288,7 @@ public class MutilthreadVariationTest extends BaseTest {
             e1.printStackTrace();
         }
 
-        for (int i = 0; i < SqlRandomGenerator.split_table_numbers; i++) {
+        for (int i = 0; i < SqlGenerator.split_table_numbers; i++) {
             try {
                 // List<QuotaField> quotaFields = bl.take();
                 // logger.info("子表查询结果：{}", quotaFields);

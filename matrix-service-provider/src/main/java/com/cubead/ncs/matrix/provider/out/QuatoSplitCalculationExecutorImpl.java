@@ -21,6 +21,7 @@ import com.cubead.ncs.matrix.provider.compress.RowMergeResultTransform;
 import com.cubead.ncs.matrix.provider.exec.QuatoSplitCalculationExecutor;
 import com.cubead.ncs.matrix.provider.exec.QuatoSplitCalculationWithCountExecutor;
 import com.cubead.ncs.matrix.provider.exec.RowMergeResultSet;
+import com.cubead.ncs.matrix.provider.exec.SqlGenerator;
 import com.cubead.ncs.matrix.provider.tools.Contants;
 
 @Component
@@ -62,7 +63,13 @@ public class QuatoSplitCalculationExecutorImpl implements QuatoSplitCalculationE
 
     @Override
     public DubboResult<PageResult> calculatAllMergeResultSetAsJsonObjects(Integer page, Integer limit,
-            QueryUnit... quotaunits) {
+            Boolean partitionSupport, QueryUnit... quotaunits) {
+
+        if (partitionSupport == null)
+            partitionSupport = Contants.PARTITION_PARALLEL_COMPUTING_SUPPORT;
+
+        if (limit == null)
+            limit = Contants.PAGE_LIMIT_DEFAULT;
 
         DubboResult<PageResult> dubboResult = new DubboResult<>();
         PageResult pageResult = new PageResult();
@@ -74,14 +81,14 @@ public class QuatoSplitCalculationExecutorImpl implements QuatoSplitCalculationE
 
         try {
 
-            final String unitsHashCodeString = generterHashCode(quotaunits);
+            final String unitsHashCodeString = SqlGenerator.generterHashCode(quotaunits);
             // 缓存中查是否刚被检索过
             RowMergeResultSet rowMergeResultSet = memcachedClient.get(unitsHashCodeString);
 
             if (null == rowMergeResultSet) {
                 // 获取结果集
                 final RowMergeResultSet rowMergeResultSetNew = quatoSplitCalculationWithCountExecutor
-                        .calculatAllMergeResultSet(quotaunits);
+                        .calculatAllMergeResultSet(partitionSupport, quotaunits);
 
                 if (DubboResult.ResultStatus.FAIL.equals(rowMergeResultSetNew.getDubboResult().getResultStatus())) {
                     return rowMergeResultSetNew.getDubboResult();
@@ -123,22 +130,23 @@ public class QuatoSplitCalculationExecutorImpl implements QuatoSplitCalculationE
         return dubboResult;
     }
 
-    /**
-     * 根据query组合计算其hash串,区别同一个查询
-     * 
-     * @author kangye
-     * @param quotaunits
-     * @return
-     */
-    public static String generterHashCode(QueryUnit... quotaunits) {
+    @Override
+    public DubboResult<PageResult> calculatAllMergeResultSetAsJsonObjects(Integer page, Integer limitInteger,
+            QueryUnit... quotaunits) {
 
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < quotaunits.length; i++) {
-            sb.append(quotaunits[i].hashCode());
-            if (i < quotaunits.length) {
-                sb.append("-");
-            }
-        }
-        return sb.toString();
+        return calculatAllMergeResultSetAsJsonObjects(page, limitInteger, null, quotaunits);
     }
+
+    @Override
+    public DubboResult<PageResult> calculatAllMergeResultSetAsJsonObjects(Integer page, QueryUnit... quotaunits) {
+
+        return calculatAllMergeResultSetAsJsonObjects(page, null, null, quotaunits);
+    }
+
+    @Override
+    public DubboResult<PageResult> calculatAllMergeResultSetAsJsonObjects(Integer page, Boolean partitionSupport,
+            QueryUnit... quotaunits) {
+        return calculatAllMergeResultSetAsJsonObjects(page, null, partitionSupport, quotaunits);
+    }
+
 }

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import com.cubead.ncs.matrix.api.SqlDismantling.QueryUnit;
 import com.cubead.ncs.matrix.provider.tools.Contants;
 
 /**
@@ -11,7 +12,7 @@ import com.cubead.ncs.matrix.provider.tools.Contants;
  * 
  * @author kangye
  */
-public class SqlRandomGenerator {
+public class SqlGenerator {
 
     private static String[] fields = { "sub_tenant_id", "campaign", "adgroup", "keyword" };
     private static String tableNamePrexis = "ca_summary_136191";
@@ -196,7 +197,7 @@ public class SqlRandomGenerator {
 
     public static String[] genertePartitionSqls(int start, int end) {
         String fromPart = "SELECT sub_tenant_id, campaign, adgroup, keyword, sum(costs_per_click) roi from ca_summary_136191_compressed_1yr";
-        return genertePartitionSqls(start, end, fromPart, SqlRandomGenerator.generteGroupSQl().toString());
+        return genertePartitionSqls(start, end, fromPart, SqlGenerator.generteGroupSQl().toString());
     }
 
     public static String[] genertePartitionSqls(int start, int end, String selectPart, String groupPart) {
@@ -274,14 +275,33 @@ public class SqlRandomGenerator {
         return genertePartitionSqls(startDay, endDay, selectPart, groupPart);
     }
 
+    /**
+     * 根据query组合计算其hash串,区别同一个查询
+     * 
+     * @author kangye
+     * @param quotaunits
+     * @return
+     */
+    public static String generterHashCode(QueryUnit... quotaunits) {
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < quotaunits.length; i++) {
+            sb.append(quotaunits[i].hashCode());
+            if (i < quotaunits.length) {
+                sb.append("-");
+            }
+        }
+        return sb.toString();
+    }
+
     public static void main(String[] args) {
 
         for (String sql : generTenRandomSql()) {
-            // System.out.println(sql);
+            System.out.println(sql);
         }
 
         for (String sql : updateEnginesSql(TableEngine.InnoDB)) {
-            // System.out.println(sql);
+            System.out.println(sql);
         }
 
         for (String s : genertePartitionSqls(99, 419)) {
@@ -292,7 +312,7 @@ public class SqlRandomGenerator {
                 + "where log_day > 99 and log_day < 119 and url ='' GROUP BY sub_tenant_id, campaign, keyword, adgroup  ";
 
         for (String s : generatPartitionSql(sql)) {
-            // System.out.println(s);
+            System.out.println(s);
         }
 
     }

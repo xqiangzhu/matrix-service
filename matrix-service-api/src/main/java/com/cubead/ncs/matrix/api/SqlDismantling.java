@@ -5,6 +5,9 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * sql 解析和验证
  * 
@@ -12,8 +15,7 @@ import java.util.TreeSet;
  */
 public class SqlDismantling {
 
-    // private static final Logger logger =
-    // LoggerFactory.getLogger(SqlDismantling.class);
+    private static final Logger logger = LoggerFactory.getLogger(SqlDismantling.class);
 
     private QueryUnit queryUnit;
     private TreeSet<String> allFields;
@@ -99,8 +101,8 @@ public class SqlDismantling {
             this.isOrderUnit = true;
         }
 
-        // logger.debug("sql:{},解析的字段是:{}", queryUnit.getSql(), getFields());
-        // logger.debug("sql:{},解析的维度是:{}", queryUnit.getSql(), getQuotas());
+        logger.debug("sql:{},解析的字段是:{}", queryUnit.getSql(), getFields());
+        logger.debug("sql:{},解析的维度是:{}", queryUnit.getSql(), getQuotas());
     }
 
     public static class QueryUnit implements Serializable {
