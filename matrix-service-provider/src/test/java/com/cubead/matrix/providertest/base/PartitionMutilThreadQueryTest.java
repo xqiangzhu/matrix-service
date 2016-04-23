@@ -14,7 +14,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
 
-import com.cubead.ncs.matrix.provider.exec.SqlGenerator;
+import com.cubead.ncs.matrix.provider.tools.PartitionSqlGenerator;
 
 public class PartitionMutilThreadQueryTest extends BaseTest {
 
@@ -31,7 +31,7 @@ public class PartitionMutilThreadQueryTest extends BaseTest {
     @Test
     public void queryTimeCost() {
         logger.info("-------------------------------按每个区多线程并行执行------------------------");
-        String[] sqls = SqlGenerator.genertePartitionSqls(start_day, end_day);
+        String[] sqls = PartitionSqlGenerator.genertePartitionSqls(start_day, end_day);
         final CountDownLatch latch = new CountDownLatch(sqls.length);
 
         for (final String sql : sqls) {
@@ -69,7 +69,7 @@ public class PartitionMutilThreadQueryTest extends BaseTest {
     // @Test
     public void randomExecuOnce() {
         logger.info("-------------------------------按每个区分区执行------------------------");
-        String[] sqls = SqlGenerator.genertePartitionSqls(start_day, end_day);
+        String[] sqls = PartitionSqlGenerator.genertePartitionSqls(start_day, end_day);
         for (String sql : sqls) {
             long time = System.currentTimeMillis();
             jdbcTemplate.query(sql, new ResultSetExtractor<Object>() {

@@ -21,8 +21,8 @@ import com.cubead.ncs.matrix.provider.compress.RowMergeResultTransform;
 import com.cubead.ncs.matrix.provider.exec.QuatoSplitCalculationExecutor;
 import com.cubead.ncs.matrix.provider.exec.QuatoSplitCalculationWithCountExecutor;
 import com.cubead.ncs.matrix.provider.exec.RowMergeResultSet;
-import com.cubead.ncs.matrix.provider.exec.SqlGenerator;
 import com.cubead.ncs.matrix.provider.tools.Contants;
+import com.cubead.ncs.matrix.provider.tools.SqlGenerator;
 
 @Component
 public class QuatoSplitCalculationExecutorImpl implements QuatoSplitCalculationExecutorInf {

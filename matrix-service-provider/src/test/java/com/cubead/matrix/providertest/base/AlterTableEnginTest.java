@@ -4,8 +4,8 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import com.cubead.ncs.matrix.provider.exec.SqlGenerator;
-import com.cubead.ncs.matrix.provider.exec.SqlGenerator.TableEngine;
+import com.cubead.ncs.matrix.provider.tools.EngineUpdateSqlGenerator;
+import com.cubead.ncs.matrix.provider.tools.EngineUpdateSqlGenerator.TableEngine;
 
 /**
  * 修改表引擎,慎重使用
@@ -19,7 +19,7 @@ public class AlterTableEnginTest extends BaseTest {
 
     // @Test
     public void updateTableInnoDBEngine() {
-        for (String alterSql : SqlGenerator.updateEnginesSql(TableEngine.InnoDB)) {
+        for (String alterSql : EngineUpdateSqlGenerator.updateEnginesSql(TableEngine.InnoDB)) {
             jdbcTemplate.execute(alterSql);
             logger.info("{}更新成功!", alterSql);
         }
@@ -27,7 +27,7 @@ public class AlterTableEnginTest extends BaseTest {
 
     // @Test
     public void updateTableMyISAMEngine() {
-        for (String alterSql : SqlGenerator.updateEnginesSql(TableEngine.MyISAM)) {
+        for (String alterSql : EngineUpdateSqlGenerator.updateEnginesSql(TableEngine.MyISAM)) {
             jdbcTemplate.execute(alterSql);
             logger.info("{}更新成功!", alterSql);
         }
@@ -35,7 +35,7 @@ public class AlterTableEnginTest extends BaseTest {
 
     @Test
     public void updateVercialTableInnoDBEngine() {
-        for (String alterSql : SqlGenerator.updateEnginesVercialSql(TableEngine.MyISAM)) {
+        for (String alterSql : EngineUpdateSqlGenerator.updateEnginesVercialSql(TableEngine.MyISAM)) {
             jdbcTemplate.execute(alterSql);
             logger.info("{}更新成功!", alterSql);
         }

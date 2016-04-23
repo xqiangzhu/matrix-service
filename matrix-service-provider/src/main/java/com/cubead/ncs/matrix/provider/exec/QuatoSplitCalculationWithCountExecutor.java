@@ -25,6 +25,7 @@ import com.cubead.ncs.matrix.api.Quota;
 import com.cubead.ncs.matrix.api.QuotaWithValue;
 import com.cubead.ncs.matrix.api.SqlDismantling;
 import com.cubead.ncs.matrix.api.SqlDismantling.QueryUnit;
+import com.cubead.ncs.matrix.provider.tools.PartitionSqlGenerator;
 
 /**
  * 分表执行引擎
@@ -196,7 +197,7 @@ public class QuatoSplitCalculationWithCountExecutor {
         @Override
         void execute(final Dimension dimension, final String sql, final long current_time) throws Exception {
             // 分拆成分区查询语句
-            final String[] parationSqls = SqlGenerator.generatPartitionSql(sql);
+            final String[] parationSqls = PartitionSqlGenerator.generatPartitionSql(sql);
             if (null == parationSqls || parationSqls.length <= 1) {
                 // 仍然在一个分区上
                 queryResultAndComniedCalculat(dimension, current_time, sql);

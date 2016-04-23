@@ -22,11 +22,11 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
 
-import com.cubead.ncs.matrix.provider.exec.SqlGenerator;
 import com.cubead.ncs.matrix.provider.exec.MatrixTableSearch.Dimen;
 import com.cubead.ncs.matrix.provider.exec.MatrixTableSearch.Dimension;
 import com.cubead.ncs.matrix.provider.exec.MatrixTableSearch.Quota;
 import com.cubead.ncs.matrix.provider.exec.MatrixTableSearch.QuotaField;
+import com.cubead.ncs.matrix.provider.tools.SqlGenerator;
 import com.lmax.disruptor.EventHandler;
 import com.lmax.disruptor.RingBuffer;
 import com.lmax.disruptor.dsl.Disruptor;

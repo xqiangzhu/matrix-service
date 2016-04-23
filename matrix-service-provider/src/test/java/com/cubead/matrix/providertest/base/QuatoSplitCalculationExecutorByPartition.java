@@ -12,7 +12,7 @@ import com.cubead.ncs.matrix.api.PageResult;
 import com.cubead.ncs.matrix.api.QuatoSplitCalculationExecutorInf;
 import com.cubead.ncs.matrix.api.Quota;
 import com.cubead.ncs.matrix.api.SqlDismantling.QueryUnit;
-import com.cubead.ncs.matrix.provider.exec.SqlGenerator;
+import com.cubead.ncs.matrix.provider.tools.SqlGenerator;
 
 public class QuatoSplitCalculationExecutorByPartition extends BaseTest {
 
