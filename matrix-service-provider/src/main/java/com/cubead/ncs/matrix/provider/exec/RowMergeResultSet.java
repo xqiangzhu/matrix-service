@@ -24,11 +24,12 @@ import com.cubead.ncs.matrix.api.SqlDismantling.QueryUnit;
 public class RowMergeResultSet implements Serializable {
 
     private static final long serialVersionUID = 1163471114733383569L;
-    private Map<String, Double[]> rowQuotaSetMap = new ConcurrentHashMap<String, Double[]>();
+    // 适当增加桶分段,减小锁粒度
+    private Map<String, Double[]> rowQuotaSetMap = new ConcurrentHashMap<String, Double[]>(100);
     private TreeSet<String> fieldList = new TreeSet<String>();
     private volatile Boolean limitHasFinished = false;
     private volatile boolean exitLimitedUnit = false;
-    private volatile List<String> orderKeys = new ArrayList<>(20000);
+    private volatile List<String> orderKeys = new ArrayList<String>(10000);
     private volatile DubboResult<PageResult> dubboResult = new DubboResult<PageResult>();
 
     public DubboResult<PageResult> getDubboResult() {
