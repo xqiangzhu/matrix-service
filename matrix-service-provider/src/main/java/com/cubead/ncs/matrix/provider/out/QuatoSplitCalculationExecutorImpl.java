@@ -3,12 +3,14 @@ package com.cubead.ncs.matrix.provider.out;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
-import net.rubyeye.xmemcached.MemcachedClient;
+import javax.annotation.Resource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import com.alibaba.fastjson.JSONObject;
@@ -38,8 +40,8 @@ public class QuatoSplitCalculationExecutorImpl implements QuatoSplitCalculationE
     @Autowired
     private RowMergeResultTransform resultTransform;
 
-    @Autowired
-    private MemcachedClient memcachedClient;
+    @Resource
+    private RedisTemplate<String, Object> redisTemplate;
 
     // 线程是尽量小,减少和DB查询线程抢占CPU
     private static ExecutorService signleExecutorService = Executors.newSingleThreadExecutor();
@@ -83,7 +85,8 @@ public class QuatoSplitCalculationExecutorImpl implements QuatoSplitCalculationE
 
             final String unitsHashCodeString = SqlGenerator.generterHashCode(quotaunits);
             // 缓存中查是否刚被检索过
-            RowMergeResultSet rowMergeResultSet = memcachedClient.get(unitsHashCodeString);
+            RowMergeResultSet rowMergeResultSet = (RowMergeResultSet) redisTemplate.opsForValue().get(
+                    unitsHashCodeString);
 
             if (null == rowMergeResultSet) {
                 // 获取结果集
@@ -93,14 +96,15 @@ public class QuatoSplitCalculationExecutorImpl implements QuatoSplitCalculationE
                 if (DubboResult.ResultStatus.FAIL.equals(rowMergeResultSetNew.getDubboResult().getResultStatus())) {
                     return rowMergeResultSetNew.getDubboResult();
                 }
+
                 // 异步缓存结果
                 signleExecutorService.execute(new Runnable() {
                     public void run() {
                         try {
                             logger.info("设置{}缓存,存储{}秒", unitsHashCodeString,
                                     Contants.QUERYUNITS_RESULT_CACHE_TIME_IN_SECOND);
-                            memcachedClient.set(unitsHashCodeString, Contants.QUERYUNITS_RESULT_CACHE_TIME_IN_SECOND,
-                                    rowMergeResultSetNew, 1500);
+                            redisTemplate.opsForValue().set(unitsHashCodeString, rowMergeResultSetNew,
+                                    Contants.QUERYUNITS_RESULT_CACHE_TIME_IN_SECOND, TimeUnit.SECONDS);
                         } catch (Exception e) {
                             logger.warn("{}未正确的缓存结果", unitsHashCodeString);
                         }
@@ -122,7 +126,6 @@ public class QuatoSplitCalculationExecutorImpl implements QuatoSplitCalculationE
             dubboResult.setBean(pageResult);
 
         } catch (Exception e) {
-            e.printStackTrace();
             logger.error("查询异常:{}", e.getMessage());
             dubboResult.setMessageAndStatus(e.getMessage(), ResultStatus.FAIL);
         }

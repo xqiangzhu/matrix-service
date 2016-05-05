@@ -22,7 +22,7 @@
 
 	
 	<dubbo:application name="matrix-service-consumer"  />
-	<dubbo:registry check="false" id="registry" address="zookeeper://192.168.3.86:2181"  />
+	<dubbo:registry check="false" id="registry" address="zookeeper://211.151.170.215:2181"  />
 	
 	<!-- 公用服务-->
 	<dubbo:reference id="calculationService" interface="com.cubead.ncs.matrix.api.QuatoSplitCalculationExecutorInf"

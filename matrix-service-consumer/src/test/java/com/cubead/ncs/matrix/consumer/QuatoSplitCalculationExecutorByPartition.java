@@ -25,7 +25,7 @@ public class QuatoSplitCalculationExecutorByPartition extends BaseTest {
     // 查询数据开始分区
     private static int start_partition = 1;
     // 查询的数据跨越多少个区
-    private static int partition_length = 11;
+    private static int partition_length = 12;
 
     @Before
     public void initQueryUnit() {

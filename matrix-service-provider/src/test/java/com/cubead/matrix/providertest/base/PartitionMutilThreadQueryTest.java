@@ -30,6 +30,7 @@ public class PartitionMutilThreadQueryTest extends BaseTest {
     // 按每个区多线程并行执行
     @Test
     public void queryTimeCost() {
+
         logger.info("-------------------------------按每个区多线程并行执行------------------------");
         String[] sqls = PartitionSqlGenerator.genertePartitionSqls(start_day, end_day);
         final CountDownLatch latch = new CountDownLatch(sqls.length);

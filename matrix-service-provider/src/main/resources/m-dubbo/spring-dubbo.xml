@@ -21,11 +21,11 @@
 	http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
 	
 	<dubbo:application name="matrix-service"  />
-	<dubbo:registry id="Iprovider" address="zookeeper://192.168.3.86:2181" />
+	<dubbo:registry id="Iprovider" address="zookeeper://211.151.170.215:2181" />
 	<dubbo:protocol name="dubbo" port="20880" />
 	
 	<!-- 公用服务 -->
-	<dubbo:service interface="com.cubead.ncs.matrix.api.QuatoSplitCalculationExecutorInf" ref="pubService" registry="Iprovider" version="1.0" />
+	<dubbo:service interface="com.cubead.ncs.matrix.api.QuatoSplitCalculationExecutorInf" ref="pubService" registry="Iprovider" version="1.0"/>
 	<bean id="pubService" class="com.cubead.ncs.matrix.provider.out.QuatoSplitCalculationExecutorImpl" />
 	
 	

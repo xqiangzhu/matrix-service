@@ -16,6 +16,7 @@ import com.cubead.ncs.matrix.api.QuatoSplitCalculationExecutorInf;
 import com.cubead.ncs.matrix.api.Quota;
 import com.cubead.ncs.matrix.api.SqlDismantling.QueryUnit;
 
+@SuppressWarnings("deprecation")
 public class QuatoSplitCalculationExecutorTest extends BaseTest {
 
     @Autowired
@@ -63,7 +64,7 @@ public class QuatoSplitCalculationExecutorTest extends BaseTest {
     }
 
     // 容错性测试, 按limit计算
-    @Test
+    // @Test
     public void calculatAllMergeResultSetAsJsonObjectsTest() {
 
         roiQueryUnit.setSql(roiQueryUnit.getSql() + " limit 10 ");
@@ -78,7 +79,7 @@ public class QuatoSplitCalculationExecutorTest extends BaseTest {
     }
 
     // 按limit计算,错误的指标
-    @Test(expected = IllegalArgumentException.class)
+    // @Test(expected = IllegalArgumentException.class)
     public void calculatAllMergeResultSetAsJsonObjectsTestInWrongQuato() {
 
         compressedQueryUnit.setQuotas(Quota.COST);
